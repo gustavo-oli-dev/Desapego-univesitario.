@@ -1,0 +1,19 @@
+# Deploy do frontend (frontend/) no Netlify. Sem framework, sem build real —
+# é HTML/CSS/JS puro, só publica a pasta como está.
+[build]
+  publish = "frontend"
+  command = "echo 'Sem build — HTML/CSS/JS puro, nada a compilar'"
+
+# O manifest.json e o service-worker.js controlam sua própria atualização
+# via CACHE_NAME (service-worker.js) e "?v=N" nos assets (ver js/site.js) —
+# por isso pedem sempre a versão mais nova ao navegador, sem depender do
+# cache da CDN do Netlify.
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "no-cache"

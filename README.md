@@ -170,6 +170,19 @@ mas estar semanticamente errado — só a verificação visual, item por item, p
 
 ## Deploy
 
+**Backend (Render):** New → Blueprint → aponte para este repositório. O Render lê o
+`render.yaml` da raiz sozinho (build, start command, variáveis de ambiente). A
+`SECRET_KEY` é gerada automaticamente; `FRONTEND_ORIGINS` precisa ser preenchida depois
+de saber a URL do Netlify.
+
+**Frontend (Netlify):** New site from Git → aponte para este repositório. O
+`netlify.toml` da raiz já configura a pasta `frontend/` como publicada.
+
+> O plano free do Render não tem disco persistente — o banco SQLite e as fotos enviadas
+> são apagados a cada novo deploy ou quando a instância volta de ociosa. Aceitável para
+> avaliação (o edital permite banco em arquivo "desde que funcione durante os testes"),
+> mas não para produção real sem um disco pago ou um banco externo.
+
 _(links da aplicação em produção — a preencher após o deploy)_
 - Backend (API): —
 - Frontend (PWA): —

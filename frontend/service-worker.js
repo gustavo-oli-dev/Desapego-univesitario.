@@ -5,7 +5,7 @@
  * só o "esqueleto" da interface (HTML/CSS/JS/imagens) funciona offline.
  */
 
-const CACHE_NAME = "desapego-shell-v250";
+const CACHE_NAME = "desapego-shell-v251";
 
 const APP_SHELL = [
   "./",
@@ -23,6 +23,7 @@ const APP_SHELL = [
   "./chat.html",
   "./admin-denuncias.html",
   "./css/styles.css",
+  "./js/config.js",
   "./js/auth.js",
   "./js/api.js",
   "./js/site.js",

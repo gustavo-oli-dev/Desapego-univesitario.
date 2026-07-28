@@ -1,0 +1,38 @@
+# Blueprint do Render para a API (backend/). Em render.com > New > Blueprint,
+# aponte pra este repositório e o Render lê este arquivo sozinho.
+#
+# Atenção: o plano "free" do Render não tem disco persistente — o arquivo
+# desapego.db e as fotos enviadas (static/uploads/) somem a cada novo deploy
+# ou quando a instância reinicia após ficar ociosa. Isso é aceitável para o
+# desafio (o edital permite banco em arquivo "desde que o sistema funcione
+# perfeitamente durante os testes"), mas não é apropriado para produção real
+# sem um disco pago ou um banco externo (Postgres, por exemplo).
+services:
+  - type: web
+    name: desapego-universitario-api
+    runtime: python
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /opcoes
+    envVars:
+      # Mesma versão do Python usada e testada em desenvolvimento.
+      - key: PYTHON_VERSION
+        value: 3.9.6
+      # Gerada automaticamente pelo Render no primeiro deploy — nunca fica
+      # exposta no código (ver backend/config.py).
+      - key: SECRET_KEY
+        generateValue: true
+      # Preencher no painel do Render depois de saber a URL do frontend no
+      # Netlify (ex.: https://desapego-universitario.netlify.app). Sem isso,
+      # o navegador bloqueia as chamadas por CORS.
+      - key: FRONTEND_ORIGINS
+        sync: false
+      # Opcionais — só preencher se quiser email de verdade em produção
+      # (mesma credencial usada em backend/.env no desenvolvimento local).
+      - key: EMAIL_REMETENTE
+        sync: false
+      - key: EMAIL_SENHA_APP
+        sync: false
