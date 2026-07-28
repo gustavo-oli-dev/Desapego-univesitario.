@@ -1,0 +1,95 @@
+/**
+ * Service Worker básico: guarda em cache os arquivos estáticos da aplicação
+ * (o "app shell") para que o site abra rápido. Os anúncios em si vêm da
+ * API (backend), então precisam de internet/rede local pra funcionar —
+ * só o "esqueleto" da interface (HTML/CSS/JS/imagens) funciona offline.
+ */
+
+const CACHE_NAME = "desapego-shell-v250";
+
+const APP_SHELL = [
+  "./",
+  "./index.html",
+  "./catalogo.html",
+  "./anunciar.html",
+  "./meus-anuncios.html",
+  "./login.html",
+  "./cadastro.html",
+  "./anuncio.html",
+  "./perfil.html",
+  "./perfil-publico.html",
+  "./recuperar-senha.html",
+  "./termos.html",
+  "./chat.html",
+  "./admin-denuncias.html",
+  "./css/styles.css",
+  "./js/auth.js",
+  "./js/api.js",
+  "./js/site.js",
+  "./js/index.js",
+  "./js/catalogo.js",
+  "./js/anunciar.js",
+  "./js/meus-anuncios.js",
+  "./js/login.js",
+  "./js/cadastro.js",
+  "./js/anuncio.js",
+  "./js/perfil.js",
+  "./js/perfil-publico.js",
+  "./js/recuperar-senha.js",
+  "./js/chat.js",
+  "./js/admin-denuncias.js",
+  "./manifest.json",
+  "./img/mascote-hero.jpg",
+  "./img/mascote-badge.png",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png",
+];
+
+// Cacheia cada arquivo individualmente (não com addAll) de propósito:
+// se um arquivo falhar ao cachear, os outros continuam funcionando e a
+// instalação não trava — era isso que deixava o site preso numa versão
+// antiga em algumas abas sempre que um arquivo mudava.
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.all(
+        APP_SHELL.map((url) =>
+          cache.add(url).catch((err) => console.warn("Falha ao cachear", url, err))
+        )
+      )
+    )
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((nomes) =>
+      Promise.all(
+        nomes.filter((nome) => nome !== CACHE_NAME).map((nome) => caches.delete(nome))
+      )
+    )
+  );
+  self.clients.claim();
+});
+
+// Network-first pra TUDO (app shell e API): busca a rede sempre que
+// possível e só cai pro cache se a rede falhar — é o que mantém o site
+// funcionando offline sem nunca mostrar uma versão velha de CSS/JS quando
+// há internet. (Antes o app shell usava stale-while-revalidate, que abria
+// mais rápido mas sempre entregava a versão anterior primeiro: qualquer
+// alteração só aparecia no carregamento seguinte.)
+function networkFirst(request) {
+  return fetch(request)
+    .then((response) => {
+      const clone = response.clone();
+      caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+      return response;
+    })
+    .catch(() => caches.match(request).then((cached) => cached || caches.match("./index.html")));
+}
+
+self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
+  event.respondWith(networkFirst(event.request));
+});

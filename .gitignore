@@ -1,0 +1,19 @@
+# Ambiente local / config de ferramentas — não faz parte do projeto em si
+.claude/
+.DS_Store
+
+# Backend
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/desapego.db
+backend/desapego.db.bak-*
+backend/*.bak
+backend/static/uploads/
+
+# credenciais de email (nunca commitar)
+backend/.env
+.env
+
+# chave secreta dos tokens JWT — gerada automaticamente, local, nunca no Git
+backend/.secret_key

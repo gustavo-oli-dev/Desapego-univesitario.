@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Desapego Universitário — Economia Circular do Campus</title>
+  <meta name="description" content="Doe ou venda itens para outros estudantes do campus: livros, calculadoras, eletrônicos e mais." />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2f6f4f" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <link rel="stylesheet" href="css/styles.css?v=69" />
+</head>
+<!-- classe "home" em vez de depender de body:has(.hero): o :has() não é
+     suportado em navegadores mais antigos (o menu lateral quebrava no celular). -->
+<body class="home">
+
+  <header class="topbar topbar--app">
+    <div class="topbar__inner">
+      <!-- Marca no topo: só aparece no mobile (no desktop a topbar vira sidebar
+           e já existe a logo fixa). -->
+      <a href="index.html" class="topbar__brand" aria-label="Início">
+        <img src="img/mascote-badge.png" alt="" /> <span>Desapego Universitário</span>
+      </a>
+      <div id="perfil-topo" class="perfil-topo"></div>
+      <nav class="topbar__nav">
+        <a href="index.html" class="btn btn--ghost" aria-current="page">Home</a>
+        <a href="catalogo.html" class="btn btn--ghost">Catálogo</a>
+        <a href="meus-anuncios.html" class="btn btn--ghost">Meus anúncios</a>
+        <a href="admin-denuncias.html" class="btn btn--ghost admin-link-denuncias" id="link-admin-denuncias" hidden>Denúncias</a>
+        <a href="anunciar.html" class="btn btn--primary">Anunciar item</a>
+        <div class="topbar__extras">
+          <button type="button" id="toggle-tema" class="tema-toggle" aria-label="Ativar modo noturno">🌙</button>
+          <a href="termos.html" class="tema-toggle" aria-label="Termos de Uso" title="Termos de Uso"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <a href="chat.html" class="chat-atalho chat-atalho--flutuante chat-notif-alvo" aria-label="Abrir o chat" title="Chat">
+    <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  </a>
+  <button type="button" id="toggle-sidebar" class="sidebar-toggle" aria-label="Recolher menu">☰</button>
+
+  <main>
+    <section class="hero">
+      <div class="hero__inner">
+        <span class="brand--hero"><img src="img/mascote-badge.png" alt="" class="brand__icon" /> Desapego<span>Universitário</span></span>
+        <div class="hero__deco" aria-hidden="true">
+          <div class="hero__mascote-moldura">
+            <img src="img/mascote-hero.jpg" alt="" class="hero__mascote" />
+          </div>
+        </div>
+        <div class="hero__content">
+          <span class="hero__kicker">🌱 Desapegue do que passou, invista no seu futuro.</span>
+          <h1>Dê uma segunda vida ao que você não usa mais.</h1>
+          <p>
+            Um marketplace feito por e para estudantes: anuncie livros, calculadoras,
+            eletrônicos e móveis para doação ou venda dentro do próprio campus.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Busca + atalhos de categoria: mobile-first, some no desktop. -->
+    <section class="home-busca">
+      <form class="home-busca__form" action="catalogo.html" method="get">
+        <input type="search" name="q" placeholder="O que você procura no campus?"
+               aria-label="Buscar no campus" />
+        <button type="submit" aria-label="Buscar">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </form>
+      <div class="chips" role="list" aria-label="Categorias">
+        <a class="chip" role="listitem" href="catalogo.html?tipo=doacao">🎁 Doações</a>
+        <a class="chip" role="listitem" href="catalogo.html?categoria=Livros">📚 Livros</a>
+        <a class="chip" role="listitem" href="catalogo.html?categoria=Calculadoras">🧮 Calculadoras</a>
+        <a class="chip" role="listitem" href="catalogo.html?categoria=Eletrônicos">💻 Eletrônicos</a>
+        <a class="chip" role="listitem" href="catalogo.html?categoria=Móveis">🪑 Móveis</a>
+      </div>
+    </section>
+
+    <section class="page-section">
+      <div class="page-header">
+        <h2>Recomendações</h2>
+        <p>Um panorama rápido do que a comunidade está compartilhando agora.</p>
+      </div>
+
+      <div class="grid-itens" id="grid-preview" aria-live="polite"></div>
+      <p class="empty-state" id="preview-empty" hidden>Ainda não há itens publicados.</p>
+
+      <div class="section-footer">
+        <a href="catalogo.html" class="btn btn--ghost">Ver catálogo completo</a>
+      </div>
+    </section>
+  </main>
+
+<!-- template de card de item (usado pelo JS) -->
+  <template id="tpl-card-item">
+    <article class="card-item">
+      <div class="card-item__img" data-role="img"></div>
+      <div class="card-item__body">
+        <span class="badge" data-role="categoria"></span>
+        <h3 data-role="titulo"></h3>
+        <p data-role="descricao"></p>
+        <span class="card-item__data" data-role="publicado"></span>
+        <div class="card-item__footer">
+          <strong data-role="preco"></strong>
+          <div class="card-item__acoes">
+            <a class="btn btn--ghost btn--sm" data-role="link-oferta" hidden>Oferta</a>
+            <a class="btn btn--ghost btn--sm" data-role="link-editar" hidden>Editar</a>
+            <button class="btn btn--danger btn--sm" data-role="btn-remover" hidden>Remover</button>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script src="js/auth.js?v=69"></script>
+  <script src="js/api.js?v=69"></script>
+  <script src="js/site.js?v=69"></script>
+  <script src="js/index.js?v=69"></script>
+</body>
+</html>

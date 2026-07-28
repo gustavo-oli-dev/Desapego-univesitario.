@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Anúncio — Desapego Universitário</title>
+  <meta name="description" content="Detalhes do item anunciado." />
+
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2f6f4f" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <link rel="stylesheet" href="css/styles.css?v=69" />
+</head>
+<body>
+
+  <header class="topbar topbar--app">
+    <div class="topbar__inner">
+      <div id="perfil-topo" class="perfil-topo"></div>
+      <nav class="topbar__nav">
+        <a href="index.html" class="btn btn--ghost">Home</a>
+        <a href="catalogo.html" class="btn btn--ghost">Catálogo</a>
+        <a href="meus-anuncios.html" class="btn btn--ghost">Meus anúncios</a>
+        <a href="admin-denuncias.html" class="btn btn--ghost admin-link-denuncias" id="link-admin-denuncias" hidden>Denúncias</a>
+        <a href="anunciar.html" class="btn btn--primary">Anunciar item</a>
+        <div class="topbar__extras">
+          <button type="button" id="toggle-tema" class="tema-toggle" aria-label="Ativar modo noturno">🌙</button>
+          <a href="termos.html" class="tema-toggle" aria-label="Termos de Uso" title="Termos de Uso"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <a href="index.html" class="logo-home" aria-label="Voltar para a Home" title="Início">
+    <img src="img/mascote-badge.png" alt="Desapego Universitário" />
+  </a>
+  <a href="chat.html" class="chat-atalho chat-atalho--flutuante chat-notif-alvo" aria-label="Abrir o chat" title="Chat">
+    <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  </a>
+  <button type="button" id="toggle-sidebar" class="sidebar-toggle" aria-label="Recolher menu">☰</button>
+
+  <main>
+    <section class="page-section">
+      <div class="section-footer" style="text-align:left; margin: 0 0 1.2rem;">
+        <a href="catalogo.html" class="btn btn--ghost btn--sm">← Voltar ao catálogo</a>
+      </div>
+
+      <div class="detalhe-wrapper">
+        <div class="menu-opcoes menu-opcoes--flutuante">
+          <button type="button" id="btn-menu-opcoes" class="menu-opcoes__botao" aria-label="Mais opções" aria-haspopup="true" aria-expanded="false">⋮</button>
+          <div class="menu-opcoes__lista" id="lista-menu-opcoes" hidden>
+            <a href="#" id="link-visitar-perfil" class="menu-opcoes__item">Visitar perfil</a>
+            <button type="button" id="btn-abrir-denuncia" class="menu-opcoes__item menu-opcoes__item--perigo">Denunciar</button>
+          </div>
+        </div>
+
+        <div class="detalhe" id="detalhe-anuncio" aria-live="polite">
+          <!-- preenchido via JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="modal-denuncia" hidden>
+    <div class="form-card form-card--central">
+      <h2 class="form-card__titulo form-card__titulo--perigo">⚠️ Denunciar anúncio</h2>
+      <p class="modal-denuncia__intro">Conte pra gente o que há de errado com esse anúncio.</p>
+      <form id="form-denuncia" class="form" novalidate>
+        <label>
+          Motivo
+          <select name="motivo" id="f-motivo-denuncia" required></select>
+        </label>
+
+        <div class="form-acoes">
+          <button type="button" id="btn-cancelar-denuncia" class="btn btn--ghost">Cancelar</button>
+          <button type="submit" class="btn btn--danger-solido">
+            <span class="btn__label">Enviar denúncia</span>
+            <span class="btn__spinner" hidden></span>
+          </button>
+        </div>
+        <p class="form-feedback" id="form-feedback-denuncia" role="status" aria-live="polite"></p>
+      </form>
+
+      <div id="pos-denuncia-bloqueio" class="form" hidden>
+        <p class="form-feedback is-success">Denúncia enviada. Obrigado por ajudar a manter a plataforma segura.</p>
+        <p id="pos-denuncia-bloqueio-texto"></p>
+        <div class="form-acoes">
+          <button type="button" id="btn-nao-bloquear" class="btn btn--ghost">Não, obrigado</button>
+          <button type="button" id="btn-sim-bloquear" class="btn btn--danger-solido">Bloquear usuário</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script src="js/auth.js?v=69"></script>
+  <script src="js/api.js?v=69"></script>
+  <script src="js/site.js?v=69"></script>
+  <script src="js/anuncio.js?v=69"></script>
+</body>
+</html>

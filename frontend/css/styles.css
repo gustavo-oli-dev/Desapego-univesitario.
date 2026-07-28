@@ -1,0 +1,2259 @@
+/* ===================================================================
+   Variáveis globais e reset
+   =================================================================== */
+:root {
+  --green-900: #1f3920;
+  --green-700: #35593a;
+  --green-500: #4f7d52;
+  --green-100: #e7f0e6;
+  --ink: #1f2621;
+  --ink-soft: #5b6660;
+  --danger: #c0392b;
+  --accent: #7a1a3a;
+  --accent-100: #f6e6ea;
+  --radius: 14px;
+  --shadow: 0 8px 24px rgba(28, 69, 50, 0.12);
+  --max-width: 1120px;
+
+  /* Uma cor própria por categoria — é o que tira a cara de "tudo verde pálido" */
+  --cat-livros: #3b5bdb;
+  --cat-livros-bg: #e8ecfd;
+  --cat-eletronicos: #7048e8;
+  --cat-eletronicos-bg: #f1e8fd;
+  --cat-calculadoras: #c9702f;
+  --cat-calculadoras-bg: #fbead9;
+  --cat-material-de-estudo: #0f9b8e;
+  --cat-material-de-estudo-bg: #dff7f4;
+  --cat-moveis: #a9720a;
+  --cat-moveis-bg: #fdf1d9;
+  --cat-vestimentas: #1f8a70;
+  --cat-vestimentas-bg: #ddf5ee;
+  --cat-outros: #d6336c;
+  --cat-outros-bg: #fde3ec;
+}
+
+* { box-sizing: border-box; }
+/* Remove o "flash" azul/cinza que o Android desenha ao tocar em qualquer
+   link/botão (o retângulo azul que aparecia atrás dos itens do menu). O
+   destaque de teclado (:focus-visible) continua valendo pra acessibilidade. */
+* { -webkit-tap-highlight-color: transparent; }
+
+/* Garante que o atributo hidden sempre vença, mesmo sobre .btn (display: inline-flex)
+   ou outras classes que definem display — do contrário elas empatam em especificidade
+   com o [hidden] do navegador e o elemento continua aparecendo. */
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  color: var(--ink);
+  background: #dfe8f5;
+  -webkit-font-smoothing: antialiased;
+  animation: page-fade-in 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* Só na home (é a única página com .hero) — um branco levemente azulado,
+   pra combinar com o azul do hero. */
+body.home { background: #dfe8f5; }
+@keyframes page-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+h1, h2, h3 { line-height: 1.2; margin: 0 0 0.4em; }
+p { margin: 0 0 1em; color: var(--ink-soft); }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+/* ===================================================================
+   Botões
+   =================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  padding: 0.7em 1.3em;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s ease;
+}
+.btn:active { transform: scale(0.97); }
+.btn--primary:hover,
+.btn--ghost:hover,
+.btn--danger:hover { transform: translateY(-1px); }
+
+.btn--primary { background: var(--green-500); color: #fff; }
+.btn--primary:hover { background: var(--green-700); box-shadow: var(--shadow); }
+
+.btn--ghost { background: transparent; color: var(--green-700); border-color: var(--green-700); }
+.btn--ghost:hover { background: var(--green-100); }
+
+.btn--danger { background: transparent; color: var(--danger); border-color: var(--danger); }
+.btn--danger:hover { background: #fbeae8; }
+
+.btn--whatsapp { background: #25d366; color: #fff; margin-top: 0.4rem; align-self: flex-start; }
+#btn-chat { margin-top: 0.4rem; align-self: flex-start; }
+.btn--whatsapp:hover { background: #1eb857; box-shadow: var(--shadow); }
+
+.btn--sm { padding: 0.4em 0.9em; font-size: 0.8rem; }
+.btn--block { width: 100%; margin-top: 0.5em; }
+
+.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.btn__spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===================================================================
+   Topbar (navegação entre páginas)
+   =================================================================== */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border-bottom: none;
+  box-shadow: 0 6px 12px -6px rgba(28, 69, 50, 0.12);
+}
+.topbar__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0.9rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 0.5em; font-weight: 700; color: var(--green-900); font-size: 1.1rem; }
+.brand__icon { width: 32px; height: 32px; border-radius: 9px; object-fit: cover; }
+.brand span { font-weight: 400; color: var(--ink-soft); margin-left: 0.1em; }
+.topbar__nav { display: flex; align-items: center; gap: 1.3rem; }
+
+/* Estilo tipo OLX: links secundários são só texto (sem pílula), só o CTA
+   principal (Anunciar item) fica com pílula sólida — menos "tudo botão
+   igual", mais hierarquia e menos espaço desperdiçado. */
+.topbar__nav a.btn--ghost {
+  background: none;
+  border-color: transparent;
+  padding: 0.3em 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  border-radius: 0;
+}
+.topbar__nav a.btn--ghost:hover { color: var(--green-900); }
+.topbar__nav a.btn--ghost[aria-current="page"] {
+  background: none;
+  color: var(--green-900);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.topbar__nav a.btn--primary { padding: 0.5em 1.1em; font-size: 0.88rem; }
+
+/* Perfil no topo do topbar/sidebar — substitui a marca (que agora só
+   aparece no hero da home). Mostra avatar + nome de quem está logado,
+   ou um botão Entrar quando não há sessão. */
+.perfil-topo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+.perfil-topo:hover .perfil-topo__nome { color: var(--green-900); text-decoration: underline; }
+.perfil-topo:hover .perfil-topo__avatar { box-shadow: 0 0 0 2px var(--green-700); }
+.perfil-topo__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green-700);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  overflow: hidden;
+}
+.perfil-topo__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.perfil-topo__nome {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+.perfil-topo__sair {
+  background: none;
+  border: none;
+  padding: 0.4em;
+  margin: -0.4em -0.4em -0.4em auto;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--green-700);
+  text-decoration: underline;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.perfil-topo__sair:hover { color: var(--green-900); }
+.perfil-topo .btn--ghost {
+  background: transparent;
+  border-color: var(--green-700);
+  border-radius: 999px;
+  padding: 0.35em 0.85em;
+  font-size: 0.8rem;
+  color: var(--green-700);
+}
+.perfil-topo .btn--ghost:hover { background: var(--green-100); color: var(--green-700); }
+
+/* Marca completa (ícone + "Desapego Universitário") — só aparece no hero
+   da home agora, não em todo topbar. */
+.brand--hero {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-weight: 700;
+  color: #fff;
+  font-size: 1.1rem;
+}
+.brand--hero span { font-weight: 400; color: rgba(255, 255, 255, 0.75); margin-left: 0.1em; }
+
+.sidebar-toggle { display: none; }
+
+/* Atalho do chat. No MOBILE vira botão flutuante no canto inferior direito:
+   o link "Chat" saiu do menu, então sem isto não haveria como abrir o chat
+   nem ver a bolinha de notificação no celular. No desktop ele é
+   reposicionado ao lado do menu (ver o @media mais abaixo). */
+.chat-atalho {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 22;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(28, 69, 50, 0.14);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(28, 69, 50, 0.22);
+  color: var(--green-700);
+}
+.chat-atalho svg { width: 22px; height: 22px; }
+/* Bolinha de notificação — fica na base (não dentro do @media) pra valer
+   também no celular, que é onde o aviso mais importa. */
+.chat-atalho__badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  box-shadow: 0 0 0 2px #fff;
+}
+body.modo-noturno .chat-atalho { background: #363636; border-color: rgba(255,255,255,0.14); color: #f2f2f2; }
+body.modo-noturno .chat-atalho__badge { box-shadow: 0 0 0 2px #363636; }
+/* Logo = botão de voltar pra Home, no mesmo canto em todas as páginas.
+   Desktop apenas; no mobile o topbar horizontal já tem o link "Home". */
+.logo-home { display: none; }
+
+/* A partir de 768px, as páginas com nav completo (.topbar--app) viram uma
+   sidebar fixa à direita — os mesmos links, só que empilhados como
+   "chips" compactos com ícone, tipo a lista de categorias da OLX: nada
+   de pílula gigante, nada de vão vazio. No mobile o topbar continua
+   horizontal (sem alteração). */
+@media (min-width: 768px) {
+  .topbar--app {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 230px;
+    border-left: none;
+    border-bottom: none;
+    background: #fff;
+    box-shadow: -12px 0 28px rgba(28, 69, 50, 0.12);
+    transition: transform 0.2s ease;
+  }
+
+  body:has(.topbar--app) > main,
+  body:has(.topbar--app) > .footer {
+    transition: margin-right 0.2s ease;
+  }
+
+  /* Botão que recolhe/expande a sidebar — fica grudado na borda esquerda
+     dela e "anda" junto quando ela sai/entra da tela. */
+  .sidebar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 1rem;
+    right: calc(230px + 0.8rem);
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(28, 69, 50, 0.14);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: var(--shadow);
+    color: var(--green-700);
+    font-size: 1.15rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 21;
+    transition: right 0.2s ease;
+  }
+
+  /* Logo fixa no canto superior esquerdo, igual em todas as páginas — mas só
+     com o menu recolhido: com a sidebar aberta o link "Home" dela já faz esse
+     papel, e a logo ainda cobriria o título da página. */
+  .logo-home {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 21;
+    line-height: 0;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    transition: transform 0.15s ease;
+  }
+  body.sidebar-colapsada .logo-home { display: block; }
+  /* espaço pra logo não encostar no título quando ela aparece */
+  body.sidebar-colapsada > main { padding-top: 2.2rem; }
+  /* a Home não usa a .logo-home (já é o destino do botão), então a logo do
+     hero continua valendo lá — sem risco de duas logos no mesmo canto. */
+  body.sidebar-colapsada.home > main { padding-top: 0; }
+  .logo-home img { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; }
+  .logo-home:hover { transform: translateY(-2px); }
+
+  /* Mesma "casquinha" do botão de menu, encostado à esquerda dele. */
+  .chat-atalho {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 1rem;
+    right: calc(230px + 0.8rem + 38px + 0.5rem);
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(28, 69, 50, 0.14);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: var(--shadow);
+    color: var(--green-700);
+    z-index: 21;
+    transition: right 0.2s ease;
+  }
+  .chat-atalho:hover { background: var(--green-100); }
+  /* desfaz o formato de botão flutuante usado no mobile */
+  .chat-atalho { bottom: auto; border-radius: 8px; }
+  .chat-atalho svg { width: 19px; height: 19px; }
+  /* acompanha o botão de menu quando a sidebar recolhe */
+  body.sidebar-colapsada .chat-atalho { right: calc(0.8rem + 38px + 0.5rem); }
+
+  body.sidebar-colapsada .topbar--app { transform: translateX(100%); }
+  /* Com o menu escondido, a área principal alargaria pra tela toda e o
+     conteúdo ficaria "boiando" no meio. Em vez disso, recorta as laterais:
+     limita a largura e centraliza, mantendo hero e recomendações alinhados
+     e proporcionais (como quando o menu está ativo). */
+  body.sidebar-colapsada > main,
+  body.sidebar-colapsada > .footer { margin-right: 0 !important; }
+  body.sidebar-colapsada .sidebar-toggle { right: 0.8rem; }
+  .topbar--app .topbar__inner {
+    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
+    padding: 1.4rem 1rem;
+  }
+  .topbar--app .perfil-topo {
+    padding: 0 0.4rem 1.2rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(28, 69, 50, 0.1);
+  }
+
+  .topbar--app .topbar__nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+    flex: 1;
+  }
+  .topbar--app .topbar__nav a.btn--ghost,
+  .topbar--app .topbar__nav a.btn--primary {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.55em 0.6em;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  .topbar--app .topbar__nav a.btn--ghost {
+    color: var(--ink-soft);
+    font-weight: 600;
+    border: 1.5px solid rgba(28, 69, 50, 0.14);
+  }
+  .topbar--app .topbar__nav a.btn--ghost:hover { background: var(--accent-100); color: var(--green-900); }
+  .topbar--app .topbar__nav a.btn--ghost[aria-current="page"] {
+    background: var(--green-100);
+    color: var(--green-900);
+    border-color: var(--green-700);
+    text-decoration: none;
+  }
+  .topbar--app .topbar__nav a.btn--primary { margin-top: 0.3rem; }
+  .topbar--app .topbar__extras { align-self: center; margin: auto auto 0; }
+
+  body:has(.topbar--app) > main,
+  body:has(.topbar--app) > .footer {
+    margin-right: 230px;
+  }
+}
+
+/* ===================================================================
+   Hero (landing)
+   =================================================================== */
+.hero {
+  /* Imagem usada sem corte/recorte — o fundo do hero vira o mesmo azul
+     já embutido na borda ESQUERDA dela (é o lado que encosta no fundo
+     nesse layout), amostrado direto da imagem pra não sobrar costura. */
+  background: #36507b;
+  position: relative;
+}
+/* Suavização curta azul→branco na base do hero. Curva em S (smoothstep)
+   pra ficar suave, mas numa faixa curta (não sobe demais). */
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 60px;
+  background: linear-gradient(
+    to bottom,
+    #36507b 0%,
+    #3e5780 12.5%,
+    #53698f 25%,
+    #7083a3 37.5%,
+    #92a1ba 50%,
+    #b4bfd1 62.5%,
+    #c6d0e0 75%,
+    #d3dcec 87.5%,
+    #dfe8f5 100%
+  );
+  pointer-events: none;
+}
+.hero__inner {
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 3.5rem 1.2rem 14.5rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.hero__content { max-width: 640px; align-self: center; }
+.hero__kicker {
+  display: inline-block;
+  margin-bottom: 0.9rem;
+  padding: 0.35em 0.9em;
+  background: var(--green-100);
+  color: var(--green-700);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 999px;
+}
+.hero h1 { font-size: 2rem; color: #fff; }
+.hero p { font-size: 1.05rem; color: rgba(255, 255, 255, 0.82); }
+
+/* Mascote: só aparece a partir do desktop, preenchendo o espaço vazio
+   ao lado do texto — é a peça que dá cara ao hero. */
+.hero__deco { display: none; }
+
+@media (min-width: 768px) {
+  .hero__inner { flex-wrap: nowrap; }
+  .hero__content { max-width: 480px; }
+  .hero h1 { font-size: 2.6rem; }
+
+  /* Texto à esquerda (alinhado com a borda dos anúncios), mascote à
+     direita — a logo é absolute, então os itens do flex são só esses dois. */
+  .hero__content { order: 0; }
+  .hero__deco { display: block; flex: 0 0 auto; order: 1; }
+  .hero__mascote { max-height: 400px; width: auto; }
+}
+
+/* ===================================================================
+   Seções de página (catálogo, anunciar, meus anúncios, preview)
+   =================================================================== */
+.page-section {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2.5rem 1.2rem 3.5rem;
+}
+/* Na home, a seção de recomendações sobe um pouco por cima da faixa azul
+   do hero — os cards "ultrapassam a linha azul" (efeito de sobreposição).
+   position + z-index garantem que os cards fiquem acima do azul. */
+.hero ~ .page-section {
+  padding-top: 0;
+  position: relative;
+  z-index: 2;
+  /* compensa o padding-bottom maior do hero: a seção sobe o mesmo tanto que
+     o azul desceu, então o texto fica no lugar e o azul cobre a legenda. */
+  margin-top: -12.5rem;
+  /* alinha a largura das recomendações com o conteúdo do hero (mais larga
+     que o padrão 1120), pra os anúncios ficarem maiores. */
+  max-width: 1280px;
+}
+
+.page-header { margin-bottom: 1.5rem; }
+.page-header h1,
+.page-header h2 { color: var(--green-900); font-size: 1.5rem; }
+.page-header--central { text-align: center; }
+
+/* Na home o cabeçalho fica sobre a faixa azul do hero — texto claro pra
+   continuar legível. */
+/* Sombra sutil pro texto branco continuar legível mesmo onde o azul do
+   hero já está mais claro (perto do gradiente). */
+.hero ~ .page-section .page-header h2 {
+  color: #fff;
+  font-size: 2.3rem;
+  text-shadow: 0 1px 6px rgba(20, 32, 54, 0.55);
+}
+.hero ~ .page-section .page-header p {
+  color: #fff;
+  font-size: 1.1rem;
+  text-shadow: 0 1px 5px rgba(20, 32, 54, 0.5);
+}
+
+.section-footer { text-align: center; margin-top: 1.8rem; }
+
+.detalhe-wrapper { position: relative; }
+
+.menu-opcoes { position: relative; }
+.menu-opcoes--flutuante { position: absolute; top: 1rem; right: 1rem; z-index: 25; }
+.menu-opcoes__botao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(28, 69, 50, 0.14);
+  border-radius: 8px;
+  background: #e4e7e5;
+  color: var(--ink-soft);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.menu-opcoes__botao:hover { background: #d7dbd8; }
+.menu-opcoes__lista {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 30;
+  min-width: 180px;
+  background: #fff;
+  border: 1.5px solid rgba(28, 69, 50, 0.14);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.menu-opcoes__item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0.6em 0.7em;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.menu-opcoes__item:hover { background: var(--green-100); }
+.menu-opcoes__item--perigo { color: var(--danger); }
+.menu-opcoes__item--perigo:hover { background: #fbeae8; }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(20, 30, 25, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem;
+}
+.modal-overlay .form-card { width: 100%; margin: 0; }
+
+/* ===================================================================
+   Busca
+   =================================================================== */
+.busca-box { margin: 0 0 1rem; max-width: 420px; }
+/* Linha de busca (campo + botão de filtros). No desktop o botão fica escondido
+   e a linha se comporta como o campo de busca sozinho. */
+.busca-box-linha { display: flex; align-items: center; gap: 0.5rem; }
+.btn-filtros { display: none; }
+.busca-box input {
+  width: 100%;
+  font: inherit;
+  padding: 0.65em 1em;
+  border-radius: 999px;
+  border: 1.5px solid rgba(28,69,50,0.18);
+  background: #fff;
+}
+.busca-box input:focus { outline: none; border-color: var(--green-500); }
+
+/* ===================================================================
+   Filtro de categoria
+   =================================================================== */
+.filtros-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin: 0 0 1.2rem;
+}
+.filtro-box {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6em 1em;
+  background: #fff;
+  border: 1.5px solid rgba(28,69,50,0.14);
+  border-radius: var(--radius);
+}
+.filtro-box label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+}
+.filtro-box select {
+  flex: 1;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--ink);
+  cursor: pointer;
+}
+.filtro-box select:focus { outline: none; }
+
+/* Subfiltros específicos de categoria (ex: Curso/Matéria/Autor em Livros) */
+.subfiltros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin: 0 0 1.2rem;
+}
+.filtro-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  background: #fff;
+  border: 1.5px solid rgba(28,69,50,0.14);
+  border-radius: var(--radius);
+  padding: 0.5em 0.9em;
+  min-width: 160px;
+}
+.filtro-mini label,
+.filtro-mini__rotulo {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+}
+.filtro-mini select {
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ink);
+  cursor: pointer;
+}
+.filtro-mini select:focus { outline: none; }
+
+/* Curso tem a lista completa da faculdade, com nomes longos ("Gestão da
+   Tecnologia da Informação"), então precisa de mais espaço que os outros. */
+.filtro-mini--curso { min-width: 260px; }
+/* o select não pode estourar a largura do cartão com nomes compridos */
+.filtro-mini select { max-width: 100%; }
+
+/* Lista de opções própria (usada no filtro de Curso): diferente do <select>
+   nativo, aqui dá pra limitar a altura da lista aberta e rolar dentro dela. */
+.lista-opcoes { position: relative; }
+/* <summary> vira a "caixinha" com o valor atual. Esconder a setinha padrão do
+   <details> exige as três linhas: nas versões novas do Chromium ela é
+   ::marker, e só o -webkit-details-marker não dá conta. */
+.lista-opcoes__botao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+}
+.lista-opcoes__botao::marker { content: ""; }
+.lista-opcoes__botao::-webkit-details-marker { display: none; }
+/* Chevron desenhado com bordas, pra ficar igual ao dos selects nativos ao
+   lado (Matéria/Autor): apontando pra baixo à direita, e pra cima quando abre. */
+.lista-opcoes__botao::after {
+  content: "";
+  flex: none;
+  width: 0.45em;
+  height: 0.45em;
+  margin-bottom: 0.15em;
+  border-right: 1.5px solid var(--ink-soft);
+  border-bottom: 1.5px solid var(--ink-soft);
+  transform: rotate(45deg);
+}
+.lista-opcoes[open] .lista-opcoes__botao::after {
+  margin-bottom: 0;
+  margin-top: 0.15em;
+  transform: rotate(-135deg);
+}
+/* Autor: busca com sugestões. O painel reaproveita .lista-opcoes__painel
+   (altura limitada + scroll); aqui só o input e o posicionamento. */
+.filtro-mini--autor { min-width: 220px; }
+.busca-sugestoes { position: relative; }
+.busca-sugestoes input {
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+.busca-sugestoes input:focus { outline: none; }
+.busca-sugestoes__painel { top: calc(100% + 0.5rem); }
+
+/* Variante usada dentro de formulário (perfil): ganha a moldura que os
+   inputs têm, já que ali não existe o cartão do .filtro-mini em volta. */
+.lista-opcoes--campo .lista-opcoes__botao {
+  padding: 0.6em 0.8em;
+  border: 1.5px solid rgba(28, 69, 50, 0.18);
+  border-radius: 10px;
+  background: #fff;
+  font-weight: 400;
+}
+/* Equivalente visual ao disabled: fora do modo de edição não abre. */
+.lista-opcoes--bloqueada .lista-opcoes__botao {
+  pointer-events: none;
+  background: #f2f4f3;
+  color: var(--ink-soft);
+}
+.lista-opcoes__painel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: -0.4rem;
+  z-index: 30;
+  min-width: calc(100% + 0.8rem);
+  max-height: 260px;   /* <- o limite de altura pedido */
+  overflow-y: auto;    /* <- rola pra ver o resto */
+  margin: 0;
+  padding: 0.3rem;
+  list-style: none;
+  background: #fff;
+  border: 1.5px solid rgba(28, 69, 50, 0.14);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.lista-opcoes__item {
+  padding: 0.45em 0.6em;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.lista-opcoes__item:hover { background: var(--green-100); }
+.lista-opcoes__item[aria-selected="true"] {
+  background: var(--green-100);
+  font-weight: 700;
+  color: var(--green-700);
+}
+
+/* ===================================================================
+   Grid de itens / cards
+   =================================================================== */
+.grid-itens {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+/* Prévia da home: 2 cards grandes VERTICAIS à esquerda (lado a lado, cada
+   um ocupando as 2 linhas) + 4 menores à direita num 2x2 (deslocado pra
+   cima) + 4 na linha de baixo. Só a partir do desktop; no celular vira
+   uma coluna só. */
+@media (min-width: 768px) {
+  .grid-destaque {
+    grid-template-columns: 1.15fr 1.15fr 1fr 1fr;
+    grid-template-rows: 240px 240px;
+    align-items: stretch;
+    /* a linha de baixo sobe -6.6rem, mas a grade reserva a altura original;
+       esse margin negativo puxa o "Ver catálogo" pra encostar nos cards. */
+    margin-bottom: -6.6rem;
+  }
+  /* 2 grandes verticais: colunas 1 e 2. Descem um pouco (translateY) e têm
+     altura fixa/ancorada no topo pra a base alinhar com a linha de baixo
+     do 2x2 da direita (que está deslocado -6.6rem). */
+  .grid-destaque .card-item:nth-child(1),
+  .grid-destaque .card-item:nth-child(2) {
+    grid-row: 1 / 3;
+    align-self: start;
+    height: 24.4rem;
+    translate: 0 0;
+  }
+  .grid-destaque .card-item:nth-child(1) { grid-column: 1; }
+  .grid-destaque .card-item:nth-child(2) { grid-column: 2; }
+  /* 4 menores: colunas 3 e 4, em 2x2, empurrados pra cima */
+  .grid-destaque .card-item:nth-child(3) { grid-column: 3; grid-row: 1; }
+  .grid-destaque .card-item:nth-child(4) { grid-column: 4; grid-row: 1; }
+  .grid-destaque .card-item:nth-child(5) { grid-column: 3; grid-row: 2; }
+  .grid-destaque .card-item:nth-child(6) { grid-column: 4; grid-row: 2; }
+  /* só o 2x2 (3–6) sobe; a linha de baixo NÃO */
+  .grid-destaque .card-item:nth-child(n+3):nth-child(-n+6) { translate: 0 -6.6rem; }
+
+  /* 4 da linha de baixo: colunas 1–4 na linha 3, puxados pra cima pra
+     encostar logo abaixo do bloco de cima (que está deslocado). */
+  .grid-destaque .card-item:nth-child(7) { grid-column: 1; grid-row: 3; }
+  .grid-destaque .card-item:nth-child(8) { grid-column: 2; grid-row: 3; }
+  .grid-destaque .card-item:nth-child(9) { grid-column: 3; grid-row: 3; }
+  .grid-destaque .card-item:nth-child(10) { grid-column: 4; grid-row: 3; }
+  .grid-destaque .card-item:nth-child(n+7) { translate: 0 -6.6rem; }
+
+  /* Imagem preenche a altura nos 6 de cima E na linha de baixo (7–10),
+     sem aspect-ratio, pra os cards respeitarem a altura fixa da linha. */
+  .grid-destaque .card-item:nth-child(-n+6) .card-item__img,
+  .grid-destaque .card-item:nth-child(n+7) .card-item__img {
+    aspect-ratio: auto;
+    flex: 1;
+    min-height: 0;
+  }
+  /* Linha de baixo (7–10) menor: corpo mais compacto. */
+  .grid-destaque .card-item:nth-child(n+7) .card-item__body { padding: 0.5rem 0.7rem 0.65rem; gap: 0.2rem; }
+  .grid-destaque .card-item:nth-child(n+7) .card-item__body h3 { font-size: 0.9rem; }
+  .grid-destaque .card-item:nth-child(n+7) .card-item__body p { font-size: 0.78rem; }
+  /* Cards menores da direita (3–6): corpo em grid — título em cima,
+     descrição à esquerda + CATEGORIA à direita na mesma linha, preço
+     embaixo. Corpo compacto pra sobrar mais espaço pra foto. */
+  .grid-destaque .card-item:nth-child(n+3):nth-child(-n+6) .card-item__body {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.15rem 0.5rem;
+    padding: 0.5rem 0.7rem 0.65rem;
+  }
+  .grid-destaque .card-item:nth-child(n+3):nth-child(-n+6) .card-item__body h3 {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    font-size: 0.9rem;
+  }
+  .grid-destaque .card-item:nth-child(n+3):nth-child(-n+6) .card-item__body p {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+    font-size: 0.78rem;
+  }
+  .grid-destaque .card-item:nth-child(n+3):nth-child(-n+6) .card-item__body .badge {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+    align-self: center;
+    margin: 0;
+  }
+  /* Data de publicação ocupa a linha 3 inteira; o preço desce pra linha 4
+     (sem isso o span novo cairia numa célula automática e quebraria o grid). */
+  .grid-destaque .card-item:nth-child(n+3):nth-child(-n+6) .card-item__data {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+  .grid-destaque .card-item:nth-child(n+3):nth-child(-n+6) .card-item__footer {
+    grid-column: 1 / -1;
+    grid-row: 4;
+  }
+
+  /* Emoji de categoria (placeholder de quem não tem foto) maior, pra a
+     área de imagem ficar bem visível. Fotos reais continuam em cover. */
+  .grid-destaque .card-item__img { font-size: 3rem; }
+}
+
+.card-item {
+  background: #fff;
+  border-radius: var(--radius);
+  border: 1px solid rgba(28, 69, 50, 0.12);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  animation: fade-in 0.35s ease;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(28, 69, 50, 0.18);
+}
+.card-item:active { transform: scale(0.98); }
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card-item__img {
+  aspect-ratio: 4 / 3;
+  background: var(--green-100) center/cover no-repeat;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--green-500);
+  font-size: 2rem;
+}
+.card-item__body { padding: 0.9rem 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.card-item__body h3 { font-size: 1rem; color: var(--ink); }
+.card-item__body p {
+  font-size: 0.85rem;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-item__data { font-size: 0.72rem; color: var(--ink-soft); }
+.card-item__footer { display: flex; align-items: center; justify-content: space-between; margin-top: 0.4rem; }
+.card-item__footer strong { color: var(--green-700); }
+.card-item__footer strong.preco--venda { color: var(--accent); }
+.card-item__acoes { display: flex; gap: 0.4rem; }
+
+.preco-original {
+  color: var(--ink-soft);
+  font-weight: 400;
+  font-size: 0.8em;
+  text-decoration: line-through;
+  margin-left: 0.3em;
+}
+.badge-oferta {
+  display: inline-block;
+  margin-left: 0.4em;
+  padding: 0.15em 0.55em;
+  background: var(--accent-100);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.badge {
+  align-self: flex-start;
+  background: var(--green-100);
+  color: var(--green-700);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.25em 0.7em;
+  border-radius: 999px;
+}
+
+/* Cor por categoria no badge e no fundo da imagem do card */
+.badge--livros, .img--livros { background-color: var(--cat-livros-bg); color: var(--cat-livros); }
+.badge--eletronicos, .img--eletronicos { background-color: var(--cat-eletronicos-bg); color: var(--cat-eletronicos); }
+.badge--calculadoras, .img--calculadoras { background-color: var(--cat-calculadoras-bg); color: var(--cat-calculadoras); }
+.badge--material-de-estudo, .img--material-de-estudo { background-color: var(--cat-material-de-estudo-bg); color: var(--cat-material-de-estudo); }
+.badge--moveis, .img--moveis { background-color: var(--cat-moveis-bg); color: var(--cat-moveis); }
+.badge--vestimentas, .img--vestimentas { background-color: var(--cat-vestimentas-bg); color: var(--cat-vestimentas); }
+.badge--outros, .img--outros { background-color: var(--cat-outros-bg); color: var(--cat-outros); }
+
+.empty-state { text-align: center; padding: 2rem 1.2rem; color: var(--ink-soft); }
+.empty-state .btn { margin-top: 0.4rem; }
+
+/* ===================================================================
+   Página de detalhes do anúncio
+   =================================================================== */
+.detalhe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.6rem;
+}
+.detalhe__galeria { flex: 1 1 280px; display: flex; flex-direction: column; gap: 0.6rem; }
+.detalhe__img {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius);
+  background-color: var(--green-100);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+}
+.detalhe__miniaturas { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.detalhe__miniatura {
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-color: var(--green-100);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.detalhe__miniatura--ativa { border-color: var(--green-700); }
+.detalhe__info { flex: 2 1 320px; display: flex; flex-direction: column; gap: 0.6rem; }
+.detalhe__info h1 { color: var(--green-900); font-size: 1.6rem; margin: 0.3rem 0 0; }
+.detalhe__preco { font-size: 1.3rem; font-weight: 700; color: var(--green-700); }
+.detalhe__preco.preco--venda { color: var(--accent); }
+.detalhe__tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
+.detalhe__tags .badge { background: var(--accent-100); color: var(--ink-soft); }
+
+/* ===================================================================
+   Formulário (Anunciar, Login, Cadastro)
+   =================================================================== */
+.form-card {
+  max-width: 560px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: var(--radius);
+  border: 1px solid rgba(28, 69, 50, 0.12);
+  box-shadow: var(--shadow);
+  padding: 1.6rem;
+}
+.form-card--central { max-width: 380px; padding: 1.8rem 1.6rem; }
+/* Painéis de listagem (moderação) usam a largura toda da seção — o 560px
+   padrão é pensado pra formulários, não pra tabelas de itens. Sem moldura
+   própria: cada item da lista já tem a sua, e duas bordas aninhadas só
+   poluem a tela. */
+.form-card--largo {
+  max-width: none;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+/* Atalho de admin (Denúncias) exclusivo do Perfil mobile — no desktop a
+   sidebar já tem esse link, então some pra não duplicar. */
+.perfil-atalhos-mobile { display: none; }
+@media (max-width: 767px) {
+  .perfil-atalhos-mobile { display: flex; justify-content: center; gap: 0.6rem; margin-bottom: 1rem; }
+}
+
+/* Perfil: dados/senha numa coluna à esquerda (largura fixa, tipo OLX),
+   histórico de anúncios ocupando o resto do espaço à direita. No mobile
+   as colunas empilham normalmente. */
+.perfil-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-items: flex-start;
+}
+.perfil-layout .form-card { max-width: none; margin: 0; }
+.perfil-layout__coluna-esquerda,
+.perfil-layout__coluna-direita { width: 100%; min-width: 0; }
+@media (min-width: 900px) {
+  .perfil-layout { flex-direction: row; gap: 1.5rem; }
+  .perfil-layout__coluna-esquerda { flex: 0 0 340px; }
+  .perfil-layout__coluna-direita { flex: 1; }
+}
+
+.termos { max-width: 720px; }
+
+/* ===================================================================
+   Chat
+   =================================================================== */
+.chat-layout { display: flex; gap: 1.2rem; height: 70vh; min-height: 420px; }
+
+.chat-lista {
+  flex: 0 0 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 0.6rem;
+}
+.chat-lista__item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55em;
+  border: none;
+  background: none;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+}
+.chat-lista__item:hover,
+.chat-lista__item--ativo { background: var(--green-100); }
+/* Seletor composto (.perfil-foto__avatar.chat-...) pra vencer a regra base
+   .perfil-foto__avatar (72px), que vem depois no arquivo e sobrescrevia o
+   tamanho do avatar do chat — era o que deixava o avatar gigante. */
+.perfil-foto__avatar.chat-lista__avatar { width: 36px; height: 36px; font-size: 0.9rem; flex-shrink: 0; }
+.chat-lista__info { min-width: 0; }
+.chat-lista__nome { font-weight: 600; font-size: 0.9rem; }
+.chat-lista__preview {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-painel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  min-width: 0;
+}
+.chat-painel__vazio { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); text-align: center; padding: 1rem; }
+.chat-painel__ativo { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.chat-painel__cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(28, 69, 50, 0.1);
+}
+.chat-painel__pessoa { display: flex; align-items: center; gap: 0.6rem; }
+.chat-painel__pessoa:hover strong { text-decoration: underline; }
+.chat-painel__cabecalho span { display: block; font-size: 0.8rem; color: var(--ink-soft); }
+.perfil-foto__avatar.chat-avatar-outro { width: 40px; height: 40px; font-size: 1rem; flex-shrink: 0; }
+.chat-painel__acoes { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+
+.chat-confirmacao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.7em 1rem;
+  background: var(--green-100);
+  border-bottom: 1px solid rgba(28, 69, 50, 0.1);
+  font-size: 0.85rem;
+  color: var(--green-900);
+}
+.chat-confirmacao__acoes { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+.chat-mensagens { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.chat-bolha { max-width: 70%; padding: 0.6em 0.9em; border-radius: 14px; font-size: 0.9rem; line-height: 1.4; word-break: break-word; display: flex; flex-direction: column; gap: 0.4rem; }
+.chat-bolha--minha { align-self: flex-end; background: var(--green-700); color: #fff; border-bottom-right-radius: 4px; }
+.chat-bolha--outro { align-self: flex-start; background: var(--green-100); color: var(--ink); border-bottom-left-radius: 4px; }
+.chat-bolha__imagem { max-width: 220px; border-radius: 10px; }
+
+.chat-form { display: flex; align-items: center; gap: 0.6rem; padding: 0.8rem 1rem; border-top: 1px solid rgba(28, 69, 50, 0.1); }
+.chat-form input {
+  flex: 1;
+  font: inherit;
+  padding: 0.65em 1em;
+  border-radius: 999px;
+  border: 1.5px solid rgba(28, 69, 50, 0.18);
+}
+.chat-form input:focus { outline: none; border-color: var(--green-500); }
+.chat-form__anexo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(28, 69, 50, 0.18);
+  font-size: 1.1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.chat-form__anexo:hover { background: var(--green-100); }
+
+/* ===================================================================
+   Mobile (abaixo do desktop, onde a sidebar ainda não existe)
+   =================================================================== */
+@media (max-width: 767px) {
+  /* Filtros tinham largura mínima pensada pro desktop (260px do Curso
+     estourava telas de 320px). No celular cada um ocupa a linha. */
+  .filtro-box,
+  .filtro-mini,
+  .filtro-mini--curso,
+  .filtro-mini--autor { min-width: 0; width: 100%; }
+  .busca-box { max-width: none; }
+
+  /* Painel de opções não pode passar da tela */
+  .lista-opcoes__painel { left: 0; right: 0; min-width: 0; }
+
+  /* Denúncia: informação e botões empilhados, botões alinhados à esquerda */
+  .denuncia-item__lado { align-items: stretch; width: 100%; }
+  .denuncia-item__acoes { justify-content: flex-start; }
+
+  /* Alvo de toque: botões pequenos ficam difíceis de acertar com o dedo */
+  .btn--sm { min-height: 40px; }
+
+  /* Folga pra barra de navegação inferior fixa não cobrir o fim do conteúdo */
+  body.com-bottomnav main { padding-bottom: calc(5.3rem + env(safe-area-inset-bottom)); }
+}
+
+/* Elementos exclusivos da Home mobile — escondidos por padrão (inclusive no
+   desktop, que tem seu próprio layout) e revelados só no @media mobile. */
+.topbar__brand { display: none; }
+.bottom-nav { display: none; }
+.btn-voltar-mobile { display: none; }
+.home-busca { display: none; }
+
+/* ===================================================================
+   Mobile — cabeçalho simplificado + barra de navegação inferior fixa
+   (todas as páginas de app, via body.com-bottomnav) e conteúdo específico
+   da Home (hero, busca, chips, grid). @media = só telas pequenas.
+   =================================================================== */
+@media (max-width: 767px) {
+  /* "Voltar" das sub-telas (injetado por configurarBotaoVoltar) — só no
+     mobile, no topo do conteúdo. */
+  /* Só a setinha, num quadradinho com contorno leve (mesmo estilo do botão de
+     tema/filtros). Alinhado com o conteúdo — sem margem negativa. */
+  .btn-voltar-mobile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin: 0.6rem 0 0.8rem 0.5rem;   /* um pouco pra baixo e pra direita */
+    padding: 0;
+    border: 1.5px solid rgba(28, 69, 50, 0.16);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--green-700);
+    cursor: pointer;
+  }
+  .btn-voltar-mobile:hover { background: var(--green-100); }
+  body.modo-noturno .btn-voltar-mobile {
+    background: #2a2a2a;
+    border-color: rgba(255, 255, 255, 0.16);
+    color: #9ad19e;
+  }
+
+  /* --- Header: marca à esquerda | avatar/Entrar + tema/termos à direita.
+     A navegação (Home/Catálogo/Anunciar/Chat/Perfil) mora na barra
+     inferior fixa — aqui só sobra identidade + preferências rápidas. */
+  body.com-bottomnav .topbar__inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: nowrap;
+  }
+
+  .topbar__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-right: auto;           /* empurra o resto pra direita */
+    font-weight: 700;
+    color: var(--green-900);
+    font-size: 0.86rem;
+    line-height: 1.15;
+  }
+  .topbar__brand img { width: 30px; height: 30px; border-radius: 8px; }
+
+  /* Avatar/nome/Sair (aparecem só quando logado) somem no cabeçalho — a
+     aba "Perfil" da barra inferior já cobre esse acesso. Quem está
+     deslogado continua vendo "Entrar" aqui (é outro elemento, o
+     #perfil-topo .btn--ghost, não afetado por esta regra). */
+  .perfil-topo__avatar,
+  .perfil-topo__nome,
+  .perfil-topo__sair {
+    display: none;
+  }
+
+  /* A mesma nav que vira sidebar no desktop, no mobile só serve pra
+     mostrar o ícone de tema — os links de navegação já estão todos na
+     barra inferior fixa (ver .bottom-nav), então somem aqui. */
+  body.com-bottomnav .topbar__nav > a.btn--ghost,
+  body.com-bottomnav .topbar__nav > a.btn--primary {
+    display: none;
+  }
+  /* Termos sai do cabeçalho no mobile — agora mora só dentro do Perfil. */
+  .topbar__extras a[href="termos.html"] { display: none; }
+
+  /* O botão flutuante do chat some — a aba "Chat" da barra inferior já
+     cobre essa função no mobile. No desktop ele continua junto do menu. */
+  .chat-atalho--flutuante { display: none; }
+
+  /* --- Barra de navegação inferior: Catálogo | Anunciar | Início | Chat |
+     Perfil, fixa, com os 5 destinos principais do app sempre à mão
+     (substitui de vez o menu hambúrguer/drawer). */
+  .bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 45;
+    display: flex;
+    justify-content: space-around;
+    background: #fff;
+    border-top: 1px solid rgba(28, 69, 50, 0.12);
+    box-shadow: 0 -6px 18px rgba(28, 69, 50, 0.1);
+    padding: 0.3rem 0.2rem calc(0.3rem + env(safe-area-inset-bottom));
+    transform: translateY(0);
+    transition: transform 0.25s ease;
+  }
+  /* Some ao rolar pra baixo (ver esconderBottomNavAoRolar em site.js). */
+  .bottom-nav--escondida { transform: translateY(100%); }
+  .bottom-nav__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.22rem;
+    flex: 1;
+    padding: 0.25rem 0;
+    /* Tom esverdeado em vez de cinza puro — combina com a marca mesmo em
+       repouso, sem ficar "morto". */
+    color: #4d6b5c;
+    text-decoration: none;
+    font-size: 0.7rem;
+    font-weight: 600;
+    transition: color 0.15s ease;
+  }
+  .bottom-nav__icone {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  /* Ativo: círculo preenchido com o verde da marca e ícone branco — bem
+     mais vivo que um fundo pálido com ícone da mesma cor. */
+  .bottom-nav__item--ativo .bottom-nav__icone { background: var(--green-700); color: #fff; }
+  .bottom-nav__icone svg { width: 25px; height: 25px; }
+  .bottom-nav__item--ativo { color: var(--green-700); font-weight: 700; }
+  .bottom-nav__badge {
+    position: absolute;
+    top: -4px;
+    right: -7px;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 3px;
+    border-radius: 999px;
+    background: var(--danger);
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    line-height: 15px;
+    text-align: center;
+    box-shadow: 0 0 0 2px #fff;
+  }
+  body.modo-noturno .bottom-nav {
+    background: #2a2a2a;
+    border-top-color: rgba(255, 255, 255, 0.14);
+  }
+  body.modo-noturno .bottom-nav__item { color: #8fa89b; }
+  body.modo-noturno .bottom-nav__item--ativo { color: #9ad19e; }
+  body.modo-noturno .bottom-nav__item--ativo .bottom-nav__icone {
+    background: #4f9d55;
+    color: #fff;
+  }
+  body.modo-noturno .bottom-nav__badge { box-shadow: 0 0 0 2px #2a2a2a; }
+
+  /* --- Hero: card arredondado, empilhado, sem o padding gigante do desktop --- */
+  .brand--hero { display: none; }            /* a marca agora está no header */
+  /* Azul mais escuro no banner (o desktop segue com o tom original). */
+  .hero {
+    margin: 0.8rem;
+    border-radius: 20px;
+    overflow: hidden;
+    /* O fundo da arte do mascote é #374f7b liso em TODAS as bordas (amostrado
+       do arquivo). O card usa exatamente essa cor no topo (onde a foto fica),
+       então o retângulo da imagem se torna invisível — sem máscara nem
+       sombra. Escurece só pra baixo, dando profundidade na área do texto. */
+    background: linear-gradient(180deg, #374f7b 0%, #374f7b 52%, #263b64 100%);
+    box-shadow: 0 10px 34px rgba(26, 39, 64, 0.28), 0 0 46px rgba(42, 64, 100, 0.16);
+  }
+  /* A faixa azul→branco (.hero::after) é a transição pro fundo no DESKTOP; no
+     mobile o hero é um card fechado e ela só cobria/cortava os botões. */
+  .hero::after { display: none; }
+  .hero__inner {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.6rem 1.3rem;
+    gap: 1rem;
+  }
+  .hero__content { max-width: none; }
+  /* Legendas menores e mais discretas. */
+  .hero__kicker { font-size: 0.72rem; }
+  .hero h1 { font-size: 1.35rem; line-height: 1.2; }
+  .hero p { font-size: 0.85rem; }
+  /* Mascote no TOPO (é "o hero"); as legendas vêm abaixo dele. Como o fundo
+     do card já é a mesma cor da borda da foto (#374f7b), a imagem entra
+     "limpa", sem precisar de máscara nem sombra. */
+  .hero__deco { display: block; order: -1; text-align: center; }
+  .hero__mascote-moldura { display: inline-block; line-height: 0; }
+  .hero__mascote {
+    max-height: 200px;
+    width: auto;
+    display: block;
+  }
+
+  /* desfaz a sobreposição desktop (hero + seção subiam uma sobre a outra) */
+  .hero ~ .page-section,
+  .hero + .home-busca { margin-top: 0; }
+  /* No mobile a seção de recomendações herdava o padding-bottom gordo do
+     desktop (3.5rem), o que deixava um vão grande em volta do "Ver catálogo".
+     Zera aqui — o respiro pra barra fixa já vem do padding-bottom do main. */
+  .hero ~ .page-section { padding-bottom: 0; }
+  .hero ~ .page-section .section-footer { margin-top: 1.1rem; }
+
+  /* "Recomendações" não fica mais sobre o azul no mobile (o hero é card
+     separado), então volta pra cor escura — branco sumia no fundo claro. */
+  .hero ~ .page-section .page-header h2 { color: var(--green-900); text-shadow: none; }
+  .hero ~ .page-section .page-header p { color: var(--ink-soft); text-shadow: none; }
+  body.modo-noturno .hero ~ .page-section .page-header h2 { color: #f2f2f2; }
+  body.modo-noturno .hero ~ .page-section .page-header p { color: #a7ada9; }
+
+  /* --- Busca + chips --- */
+  .home-busca { display: block; padding: 0.4rem 0.8rem 0; }
+  .home-busca__form {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1.5px solid rgba(28, 69, 50, 0.16);
+    border-radius: 999px;
+    padding: 0.15rem 0.15rem 0.15rem 1rem;
+  }
+  .home-busca__form input {
+    flex: 1;
+    border: none;
+    background: none;
+    font: inherit;
+    padding: 0.6em 0;
+    color: var(--ink);
+  }
+  .home-busca__form input:focus { outline: none; }
+  .home-busca__form button {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: var(--green-700);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  /* chips com rolagem horizontal, sem barra visível */
+  .chips {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.2rem;
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: none;
+    padding: 0.5em 0.9em;
+    border-radius: 999px;
+    background: #fff;
+    border: 1.5px solid rgba(28, 69, 50, 0.16);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .chip:active { background: var(--green-100); }
+
+  /* --- Recomendações: 2 colunas (o layout destaque do desktop não vale aqui) --- */
+  #grid-preview { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .home-busca + .page-section { padding-top: 1.5rem; }
+
+  /* Filtros do catálogo escondidos por padrão; o botão de filtros (ao lado da
+     busca) abre/fecha. O campo de busca ocupa a linha, o botão fica à direita. */
+  .busca-box-linha { margin-bottom: 1rem; }
+  .busca-box { max-width: none; flex: 1; margin-bottom: 0; }
+  .btn-filtros {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border: 1.5px solid rgba(28, 69, 50, 0.18);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--green-700);
+    cursor: pointer;
+  }
+  .btn-filtros.ativo { background: var(--green-700); color: #fff; border-color: var(--green-700); }
+  .catalogo-filtros { display: none; }
+  .catalogo-filtros.aberto { display: block; }
+  body.modo-noturno .btn-filtros { background: #363636; border-color: rgba(255, 255, 255, 0.16); color: #9ad19e; }
+  body.modo-noturno .btn-filtros.ativo { background: #4f9d55; color: #fff; border-color: #4f9d55; }
+
+  /* Catálogo e demais grades: 2 colunas no celular. O minmax(220px) do desktop
+     só cabia 1 por linha em tela estreita, deixando cards gigantes. */
+  .grid-itens { grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+  /* Cards menores e proporcionais: imagem mais baixa e textos mais compactos. */
+  .grid-itens .card-item__img { font-size: 1.6rem; }
+  .grid-itens .card-item__body { padding: 0.6rem 0.7rem 0.75rem; gap: 0.25rem; }
+  .grid-itens .card-item__body h3 { font-size: 0.9rem; }
+  .grid-itens .card-item__body p { font-size: 0.78rem; }
+  .grid-itens .card-item__data { font-size: 0.68rem; }
+  .grid-itens .card-item__footer { margin-top: 0.3rem; flex-wrap: wrap; gap: 0.35rem; }
+  .grid-itens .card-item__footer strong { font-size: 0.9rem; }
+
+  /* modo noturno pros elementos novos */
+  body.modo-noturno .topbar__brand { color: #f2f2f2; }
+  body.modo-noturno .home-busca__form { background: #414141; border-color: rgba(255,255,255,0.16); }
+  body.modo-noturno .home-busca__form input { color: #f2f2f2; }
+  body.modo-noturno .chip { background: #414141; border-color: rgba(255,255,255,0.16); color: #f2f2f2; }
+}
+
+/* Botão "voltar" da conversa — só no mobile (ver o @media). */
+.chat-voltar {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin-right: 0.1rem;
+  border: none;
+  background: none;
+  color: var(--green-700);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  /* Chat estilo WhatsApp/OLX: OU a lista de conversas OU a conversa aberta,
+     nunca as duas empilhadas. A conversa ocupa a tela toda; "voltar" (no
+     cabeçalho) mostra a lista de novo. */
+  .chat-layout { flex-direction: column; height: auto; gap: 0; }
+  /* Menos padding em volta da lista (o desktop usa 2.5/3.5rem, exagerado no
+     mobile). O respiro embaixo pra barra fixa já vem do padding do main. */
+  .page-section--chat { padding: 1rem 1rem 0; }
+  .page-section--chat .page-header { margin-bottom: 0.8rem; }
+  /* Lista estilo WhatsApp: linhas de largura total, SEM o card branco gigante
+     (o box-shadow/min-height deixava uma caixa vazia enorme com 1 conversa).
+     A lista fica só do tamanho do conteúdo; o fundo do app preenche o resto. */
+  .chat-lista {
+    flex: 1 1 auto;
+    max-height: none;
+    min-height: 0;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    gap: 0;
+  }
+  .chat-lista__item {
+    border-radius: 0;
+    padding: 0.7em 0.3em;
+    border-bottom: 1px solid rgba(28, 69, 50, 0.08);
+  }
+  body.modo-noturno .chat-lista__item { border-bottom-color: rgba(255, 255, 255, 0.08); }
+  /* Painel escondido enquanto nenhuma conversa está aberta. */
+  .chat-painel { display: none; }
+  .chat-layout.conversa-aberta .chat-lista { display: none; }
+  /* Conversa aberta: painel FIXO, preenchendo tudo entre o cabeçalho (--chat-topo)
+     e a barra inferior (--chat-base), medidos em JS. Fixo (não altura em fluxo)
+     pra encostar de fato na barra — sem aquele cinza sobrando embaixo — e as
+     mensagens rolam por dentro, com o campo de digitar sempre à vista. */
+  body.chat-em-conversa main { padding-bottom: 0; }
+  body.chat-em-conversa .page-section { padding: 0; }
+  .chat-layout.conversa-aberta .chat-painel {
+    display: flex;
+    position: fixed;
+    top: var(--chat-topo, 3.6rem);
+    bottom: var(--chat-base, 4.6rem);
+    left: 0;
+    right: 0;
+    z-index: 30;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .chat-voltar { display: flex; }
+
+  /* Perfil do vendedor encostado na seta de voltar (à esquerda), e o menu ⋮
+     empurrado pro canto direito. */
+  .chat-painel__cabecalho { justify-content: flex-start; gap: 0.5rem; }
+  .chat-painel__acoes { margin-left: auto; }
+  /* O nome/anúncio ocupa o espaço que sobra até o menu, sem centralizar. */
+  .chat-painel__pessoa { flex: 1; min-width: 0; }
+  .chat-painel__pessoa strong,
+  .chat-painel__cabecalho span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+  }
+
+  /* Com a conversa aberta, o título "Chat" da página some pra a conversa
+     ocupar a tela toda; o "Voltar" no cabeçalho já orienta a navegação. */
+  body.chat-em-conversa .page-header { display: none; }
+
+  /* Campo de digitar: garante que o botão Enviar não seja cortado. */
+  .chat-form { padding: 0.6rem 0.7rem; gap: 0.4rem; }
+  .chat-form input { min-width: 0; }
+  .chat-form .btn--sm { flex-shrink: 0; }
+}
+.termos h2 { color: var(--green-900); font-size: 1.1rem; margin: 1.6rem 0 0.5rem; }
+.termos h2:first-child { margin-top: 0; }
+.termos p { margin: 0 0 0.6rem; }
+.termos ul { margin: 0 0 0.6rem; padding-left: 1.3rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.termos li { color: var(--ink-soft); }
+.termos li strong { color: var(--ink); }
+.form-card + .form-card { margin-top: 1.2rem; }
+.form-card__titulo { font-size: 1.05rem; color: var(--green-900); margin: 0 0 1rem; }
+.form-card__titulo--perigo { color: var(--danger); }
+
+.modal-denuncia__intro { font-size: 0.85rem; color: var(--ink-soft); margin: 0 0 1.2rem; }
+
+.btn--danger-solido { background: var(--danger); color: #fff; }
+.btn--danger-solido:hover { background: #a52f22; box-shadow: var(--shadow); }
+
+.perfil-foto { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.4rem; }
+.perfil-foto__avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green-700);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.6rem;
+}
+.perfil-foto__avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.perfil-publico__cartao { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.8rem; }
+.perfil-publico__cartao h1 { color: var(--green-900); font-size: 1.3rem; margin: 0; }
+.perfil-publico__curso { margin: -0.4rem 0 0; font-size: 0.85rem; color: var(--ink-soft); }
+.perfil-foto__avatar--grande { width: 96px; height: 96px; font-size: 2.1rem; }
+
+.abas-anuncios { display: flex; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(28, 69, 50, 0.14); }
+.abas-anuncios__botao {
+  background: none;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  padding: 0.5em 0.2em;
+  margin-bottom: -1px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.abas-anuncios__botao:hover { color: var(--green-900); }
+.abas-anuncios__botao.is-ativa { color: var(--green-700); border-bottom-color: var(--green-700); }
+
+.form { display: flex; flex-direction: column; gap: 0.8rem; }
+.form-acoes { display: flex; gap: 0.6rem; }
+.form-acoes .btn { flex: 1; }
+.form label,
+.form .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+/* Asterisco dos campos obrigatórios — fica dentro do mesmo span do texto
+   do label (não solto como filho direto), senão o layout em coluna do
+   .form label joga ele pra uma linha própria embaixo do campo. */
+.campo-obrigatorio { color: var(--danger); }
+.form input,
+.form select,
+.form textarea {
+  font: inherit;
+  padding: 0.65em 0.8em;
+  border-radius: 10px;
+  border: 1.5px solid rgba(28,69,50,0.22);
+  background: #fff;
+}
+/* Campo de senha com o botão do olho encostado à direita, por dentro. */
+.campo-senha { position: relative; display: flex; }
+.campo-senha input { width: 100%; padding-right: 2.6em; }
+.campo-senha__olho {
+  position: absolute;
+  top: 50%;
+  right: 0.6em;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2em;
+  border: none;
+  background: none;
+  color: var(--ink-soft);
+  cursor: pointer;
+  line-height: 0;
+}
+.campo-senha__olho:hover { color: var(--green-700); }
+
+.form input:focus,
+.form select:focus,
+.form textarea:focus {
+  outline: none;
+  border-color: var(--green-500);
+  box-shadow: 0 0 0 3px var(--green-100);
+}
+.form textarea { min-height: 80px; resize: vertical; }
+.form input[type="file"] { padding: 0.5em; cursor: pointer; }
+
+.campo-fotos { display: flex; flex-direction: column; gap: 0.5rem; }
+.campo-fotos__titulo { font-size: 0.85rem; font-weight: 600; color: var(--ink); }
+.campo-fotos__botao { align-self: flex-start; }
+
+.bloco-oferta { margin: -0.3rem 0 0.2rem; }
+.bloco-oferta__aviso { font-size: 0.8rem; color: var(--ink-soft); margin: 0.35rem 0 0; text-align: center; }
+.btn--desabilitado { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+.lista-denuncias { display: flex; flex-direction: column; gap: 0.6rem; }
+/* Informação à esquerda, providências à direita, ocupando a linha inteira.
+   Empilha sozinho quando não couber (celular). */
+.denuncia-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1em 1.2em;
+  border: 1px solid rgba(28, 69, 50, 0.12);
+  border-radius: var(--radius);
+}
+.denuncia-item__lado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+/* Empilha as informações: sem isto os spans ficavam na mesma linha, colados
+   ("Item com fotosDiscurso de ódio..."), como aparecia no painel. */
+.denuncia-item__info { display: flex; flex-direction: column; gap: 0.15rem; flex: 1 1 340px; min-width: 0; }
+.denuncia-item__anuncio { font-weight: 700; color: var(--green-900); }
+.denuncia-item__motivo { font-size: 0.95rem; color: var(--danger); font-weight: 700; }
+.denuncia-item__meta { font-size: 0.78rem; color: var(--ink-soft); }
+/* Selo do que foi feito, nas solucionadas */
+.denuncia-item__resolucao {
+  align-self: flex-start;
+  margin-top: 0.3rem;
+  padding: 0.2em 0.7em;
+  border-radius: 999px;
+  background: var(--green-100);
+  color: var(--green-700);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.denuncia-item__acoes { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end; }
+.lista-denuncias { display: flex; flex-direction: column; gap: 0.8rem; }
+
+.form-rodape { text-align: center; font-size: 0.85rem; margin: 0.8rem 0 0; }
+.form-rodape a { color: var(--green-700); font-weight: 600; text-decoration: underline; }
+
+/* "Criar conta" usa um acento azul em vez do verde padrão do "Entrar" —
+   mesma estrutura de tela nas duas, mas essa cor evita confundir uma com
+   a outra à primeira vista (vale pro mobile e pro desktop, sem @media). */
+body.pagina-cadastro .page-header h1 { color: #2b4c8c; }
+body.pagina-cadastro .btn--primary { background: #3b5bdb; }
+body.pagina-cadastro .btn--primary:hover { background: #2b4c8c; }
+body.pagina-cadastro .form input:focus,
+body.pagina-cadastro .form select:focus,
+body.pagina-cadastro .form textarea:focus {
+  border-color: #3b5bdb;
+  box-shadow: 0 0 0 3px #e8ecfd;
+}
+body.pagina-cadastro .form-rodape a { color: #3b5bdb; }
+
+.cadastro-passo__intro { font-size: 0.85rem; color: var(--ink-soft); text-align: center; margin: 0 0 1.2rem; }
+
+.divisor {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0.9rem 0;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+.divisor::before,
+.divisor::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(28,69,50,0.14);
+}
+
+.google-btn { display: flex; justify-content: center; }
+
+.preview-imagens { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: -0.4rem; }
+.preview-imagens__item { position: relative; width: 90px; height: 90px; }
+.preview-imagens__item img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+.preview-imagens__remover {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: var(--danger);
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.campos-extra {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 0.9rem;
+  background: var(--accent-100);
+  border-radius: 10px;
+  border: 1.5px dashed rgba(28,69,50,0.18);
+}
+
+/* Campo de busca + checklist (Curso/Matéria/Autor): digita pra filtrar
+   uma lista fixa de valores já cadastrados e marca com checkbox os que
+   servem. Não cria valor novo por aqui. */
+.campo-multiescolha { display: flex; flex-direction: column; gap: 0.35rem; }
+.campo-multiescolha__label { font-size: 0.85rem; font-weight: 600; color: var(--ink); }
+
+.cm-opcoes {
+  display: flex;
+  flex-direction: column;
+  max-height: 140px;
+  overflow-y: auto;
+  border: 1.5px solid rgba(28,69,50,0.18);
+  border-radius: 10px;
+  background: #fff;
+}
+.cm-opcoes:empty { display: none; border: none; }
+
+.cm-opcao {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5em 0.8em;
+  font-size: 0.85rem;
+  font-weight: 400;
+  cursor: pointer;
+}
+.cm-opcao:hover { background: var(--accent-100); }
+.cm-opcao input { width: auto; }
+
+.cm-vazio { margin: 0; padding: 0.6em 0.8em; font-size: 0.8rem; color: var(--ink-soft); }
+
+.tipo-anuncio {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 1.2rem;
+}
+.tipo-anuncio legend { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; }
+.radio { flex-direction: row !important; align-items: center; gap: 0.4em !important; font-weight: 500 !important; }
+.radio input { width: auto; }
+
+.checkbox-linha {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.6em !important;
+  font-weight: 500 !important;
+  font-size: 0.85rem !important;
+  color: var(--ink-soft) !important;
+}
+.checkbox-linha input { width: auto; flex-shrink: 0; }
+
+.form-feedback {
+  margin: 0;
+  min-height: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+.form-feedback:not(:empty) { margin-top: 0.2rem; }
+.form-feedback a { text-decoration: underline; }
+.form-feedback.is-success { color: var(--green-700); }
+.form-feedback.is-error { color: var(--danger); }
+
+/* ===================================================================
+   Rodapé
+   =================================================================== */
+.footer { text-align: center; padding: 2rem 1.2rem; color: var(--ink-soft); font-size: 0.8rem; }
+
+/* ===================================================================
+   Modo noturno — troca o fundo ice-gray por preto. Os cards/formulários
+   continuam claros de propósito (viram "ilhas" sobre o fundo escuro);
+   só o que fica direto em cima do fundo (topbar, títulos, textos soltos)
+   precisa de cor nova pra continuar legível.
+   =================================================================== */
+.topbar__extras { display: inline-flex; align-items: center; gap: 0.6rem; margin-left: 0.6rem; }
+
+.tema-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(28, 69, 50, 0.14);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--shadow);
+  color: var(--green-700);
+  line-height: 1;
+  cursor: pointer;
+}
+
+body.modo-noturno { background: #363636; }
+/* Mesma curva curta do modo claro, só troca a cor final pro fundo escuro. */
+body.modo-noturno .hero::after {
+  background: linear-gradient(
+    to bottom,
+    #36507b 0%,
+    #364f78 12.5%,
+    #364c70 25%,
+    #364865 37.5%,
+    #364359 50%,
+    #363e4c 62.5%,
+    #363a41 75%,
+    #363739 87.5%,
+    #363636 100%
+  );
+}
+body.modo-noturno .page-header h1,
+body.modo-noturno .page-header h2,
+body.modo-noturno .perfil-publico__cartao h1 { color: #f2f2f2; }
+body.modo-noturno .perfil-publico__curso { color: #a7ada9; }
+body.modo-noturno .abas-anuncios { border-bottom-color: rgba(255, 255, 255, 0.14); }
+body.modo-noturno .abas-anuncios__botao { color: #a7ada9; }
+body.modo-noturno .abas-anuncios__botao:hover { color: #f2f2f2; }
+body.modo-noturno .abas-anuncios__botao.is-ativa { color: #9ad19e; border-bottom-color: #9ad19e; }
+body.modo-noturno .page-header p,
+body.modo-noturno .empty-state,
+body.modo-noturno .footer { color: #a7ada9; }
+
+body.modo-noturno .topbar { background: rgba(50, 50, 50, 0.92); box-shadow: 0 6px 12px -6px rgba(0, 0, 0, 0.5); }
+body.modo-noturno .perfil-topo__nome { color: #d8dbd9; }
+body.modo-noturno .perfil-topo:hover .perfil-topo__nome { color: #c3e6c5; }
+body.modo-noturno .perfil-topo:hover .perfil-topo__avatar { box-shadow: 0 0 0 2px #9ad19e; }
+body.modo-noturno .topbar__nav a.btn--ghost { color: #c4c9c6; border-color: rgba(255, 255, 255, 0.14); }
+body.modo-noturno .topbar__nav a.btn--ghost:hover { background: rgba(242, 242, 242, 0.08); color: #f2f2f2; }
+body.modo-noturno .topbar__nav a.btn--ghost[aria-current="page"] {
+  background: rgba(154, 209, 158, 0.16);
+  color: #c3e6c5;
+  border-color: #4c7a50;
+}
+body.modo-noturno .tema-toggle,
+body.modo-noturno .chat-atalho,
+body.modo-noturno .sidebar-toggle { background: #363636; border-color: rgba(255, 255, 255, 0.14); color: #f2f2f2; }
+body.modo-noturno .chat-atalho:hover { background: rgba(154, 209, 158, 0.12); }
+body.modo-noturno .perfil-topo__sair { color: #9ad19e; }
+body.modo-noturno .perfil-topo__sair:hover { color: #c3e6c5; }
+body.modo-noturno .perfil-topo .btn--ghost { border-color: #4c7a50; color: #9ad19e; }
+body.modo-noturno .perfil-topo .btn--ghost:hover { background: rgba(154, 209, 158, 0.12); color: #c3e6c5; }
+
+/* Botões no modo noturno: as cores do modo claro (verde/vermelho escuros)
+   ficam sem contraste contra o cinza de fundo — clareamos pra ficarem
+   visíveis de novo, sem perder a identidade verde/vermelho. */
+body.modo-noturno .btn--primary { background: #4f9d55; color: #fff; }
+body.modo-noturno .btn--primary:hover { background: #5db362; }
+body.modo-noturno .btn--ghost { color: #9ad19e; border-color: #4c7a50; }
+body.modo-noturno .btn--ghost:hover { background: rgba(154, 209, 158, 0.12); color: #c3e6c5; }
+body.modo-noturno .btn--danger { color: #e5776b; border-color: #a83f34; }
+body.modo-noturno .btn--danger:hover { background: rgba(197, 57, 43, 0.16); }
+body.modo-noturno .btn--danger-solido { background: #c14a3c; }
+body.modo-noturno .btn--danger-solido:hover { background: #d1584a; }
+
+body.modo-noturno .card-item,
+body.modo-noturno .form-card,
+body.modo-noturno .denuncia-item {
+  background: #363636;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+body.modo-noturno .card-item__body h3 { color: #f2f2f2; }
+body.modo-noturno .card-item__body p { color: #a7ada9; }
+body.modo-noturno .card-item__data { color: #8f948f; }
+body.modo-noturno .card-item__footer strong { color: #9ad19e; }
+body.modo-noturno .card-item__footer strong.preco--venda { color: #e08bab; }
+body.modo-noturno .denuncia-item__anuncio { color: #f2f2f2; }
+body.modo-noturno .denuncia-item__motivo { color: #e5776b; }
+body.modo-noturno .denuncia-item__meta { color: #a7ada9; }
+body.modo-noturno .denuncia-item__resolucao {
+  background: rgba(154, 209, 158, 0.14);
+  color: #9ad19e;
+}
+
+body.modo-noturno .form-card__titulo { color: #f2f2f2; }
+/* Termos de Uso: os textos usam --ink/--green-900 (cores escuras), que somem
+   sobre o card escuro — aqui vão as versões claras. */
+body.modo-noturno .termos { color: #d8dbd9; }
+/* precisa mirar o <p> direto: a regra global `p { color: ... }` aplica cor
+   no próprio elemento, e herança do .termos não vence isso. */
+body.modo-noturno .termos p { color: #d8dbd9; }
+body.modo-noturno .termos h2 { color: #f2f2f2; }
+body.modo-noturno .termos li { color: #a7ada9; }
+body.modo-noturno .termos li strong,
+body.modo-noturno .termos p strong { color: #f2f2f2; }
+body.modo-noturno .termos a { color: #9ad19e; }
+body.modo-noturno .form label,
+body.modo-noturno .form .campo { color: #d8dbd9; }
+
+/* Anunciar item: o bloco de Curso/Matéria/Autor usava o rosa (--accent-100)
+   fixo, que destoava no tema escuro. Aqui vira uma superfície neutra. */
+body.modo-noturno .campos-extra {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+body.modo-noturno .campo-multiescolha__label,
+body.modo-noturno .tipo-anuncio legend { color: #d8dbd9; }
+body.modo-noturno .checkbox-linha { color: #a7ada9 !important; }
+/* lista que abre ao digitar em Curso/Matéria/Autor (era branca, hover rosa) */
+body.modo-noturno .cm-opcoes {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+body.modo-noturno .cm-opcao { color: #d8dbd9; }
+body.modo-noturno .cm-opcao:hover { background: rgba(154, 209, 158, 0.14); }
+body.modo-noturno .cm-vazio { color: #a7ada9; }
+
+/* Chat: a página inteira não tinha modo noturno — ficava um bloco branco
+   no meio do tema escuro. */
+/* Superfícies um tom MAIS CLARO que o fundo da página (#363636) — com a
+   mesma cor os dois painéis sumiam e o chat virava um bloco escuro só. */
+body.modo-noturno .chat-lista,
+body.modo-noturno .chat-painel {
+  background: #414141;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+body.modo-noturno .chat-lista__item { color: #f2f2f2; }
+body.modo-noturno .chat-lista__item:hover,
+body.modo-noturno .chat-lista__item--ativo { background: rgba(154, 209, 158, 0.14); }
+body.modo-noturno .chat-lista__nome { color: #f2f2f2; }
+body.modo-noturno .chat-lista__preview,
+body.modo-noturno .chat-painel__vazio,
+body.modo-noturno .chat-painel__cabecalho span { color: #a7ada9; }
+body.modo-noturno .chat-painel__cabecalho,
+body.modo-noturno .chat-form { border-color: rgba(255, 255, 255, 0.12); }
+body.modo-noturno .chat-painel__pessoa strong { color: #f2f2f2; }
+body.modo-noturno .chat-confirmacao {
+  background: rgba(154, 209, 158, 0.12);
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+  color: #c3e6c5;
+}
+/* a bolha do outro era verde-claro com texto escuro */
+body.modo-noturno .chat-bolha--outro { background: #4a4a4a; color: #f2f2f2; }
+body.modo-noturno .chat-bolha--minha { background: #4f9d55; color: #fff; }
+body.modo-noturno .chat-form input {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #f2f2f2;
+}
+body.modo-noturno .campo-fotos__titulo { color: #d8dbd9; }
+body.modo-noturno .bloco-oferta__aviso { color: #a7ada9; }
+body.modo-noturno .cadastro-passo__intro { color: #a7ada9; }
+body.modo-noturno .form input,
+body.modo-noturno .form select,
+body.modo-noturno .form textarea {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #f2f2f2;
+}
+body.modo-noturno .form input:disabled,
+body.modo-noturno .form select:disabled,
+body.modo-noturno .form textarea:disabled {
+  opacity: 0.7;
+}
+/* O preenchimento automático do navegador pinta o fundo por conta própria,
+   com prioridade acima do nosso `background` — daí o campo Senha aparecer
+   branco no modo escuro. Precisa de !important pra vencer, e a transição
+   longa segura a cor caso o navegador tente repintar depois. */
+body.modo-noturno input:-webkit-autofill,
+body.modo-noturno input:-webkit-autofill:hover,
+body.modo-noturno input:-webkit-autofill:focus,
+body.modo-noturno input:-webkit-autofill:active {
+  -webkit-text-fill-color: #f2f2f2 !important;
+  -webkit-box-shadow: 0 0 0 1000px #2a2a2a inset !important;
+  box-shadow: 0 0 0 1000px #2a2a2a inset !important;
+  caret-color: #f2f2f2 !important;
+  transition: background-color 100000s ease-in-out 0s;
+}
+body.modo-noturno .campo-senha__olho { color: #a7ada9; }
+body.modo-noturno .campo-senha__olho:hover { color: #9ad19e; }
+
+/* Legendas e links das telas de login/cadastro/recuperar senha: usavam verde
+   escuro e cinza escuro, que somem no fundo escuro. */
+body.modo-noturno .form-rodape { color: #a7ada9; }
+body.modo-noturno .form-rodape a { color: #9ad19e; }
+body.modo-noturno .form-rodape a:hover { color: #c3e6c5; }
+body.modo-noturno .divisor { color: #a7ada9; }
+body.modo-noturno .divisor::before,
+body.modo-noturno .divisor::after { background: rgba(255, 255, 255, 0.16); }
+body.modo-noturno .cadastro-passo__intro { color: #a7ada9; }
+
+/* "Criar conta" no modo noturno: mesmo acento azul, só mais claro pra
+   contrastar com o fundo escuro. */
+body.modo-noturno.pagina-cadastro .page-header h1 { color: #8fa8e8; }
+body.modo-noturno.pagina-cadastro .btn--primary { background: #5470d6; }
+body.modo-noturno.pagina-cadastro .btn--primary:hover { background: #6f89e0; }
+body.modo-noturno.pagina-cadastro .form input:focus,
+body.modo-noturno.pagina-cadastro .form select:focus,
+body.modo-noturno.pagina-cadastro .form textarea:focus {
+  border-color: #5470d6;
+  box-shadow: 0 0 0 3px rgba(84, 112, 214, 0.25);
+}
+body.modo-noturno.pagina-cadastro .form-rodape a { color: #8fa8e8; }
+
+/* Lista de opções própria (Curso, no catálogo e no perfil) — sem isto o
+   painel ficaria branco sobre o fundo escuro. */
+body.modo-noturno .lista-opcoes__painel {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+body.modo-noturno .lista-opcoes__item { color: #d8dbd9; }
+body.modo-noturno .lista-opcoes__item:hover,
+body.modo-noturno .lista-opcoes__item[aria-selected="true"] {
+  background: rgba(154, 209, 158, 0.14);
+  color: #9ad19e;
+}
+body.modo-noturno .lista-opcoes__botao { color: #f2f2f2; }
+
+/* Área de filtros do catálogo: os cartões continuavam brancos no modo
+   noturno. Sem isto o texto claro do Curso ficava branco sobre branco. */
+body.modo-noturno .filtro-box,
+body.modo-noturno .filtro-mini,
+body.modo-noturno .busca-box input {
+  background: #414141;
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #f2f2f2;
+}
+body.modo-noturno .filtro-box label,
+body.modo-noturno .filtro-mini label,
+body.modo-noturno .filtro-mini__rotulo { color: #a7ada9; }
+body.modo-noturno .filtro-box select,
+body.modo-noturno .filtro-mini select,
+body.modo-noturno .busca-sugestoes input { color: #f2f2f2; }
+body.modo-noturno .busca-box input::placeholder,
+body.modo-noturno .busca-sugestoes input::placeholder { color: #9aa09c; }
+body.modo-noturno .lista-opcoes--campo .lista-opcoes__botao {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+body.modo-noturno .lista-opcoes--bloqueada .lista-opcoes__botao {
+  background: #313131;
+  color: #a7ada9;
+}
+
+/* ===================================================================
+   Auditoria de contraste (modo noturno): botões e fundos que ainda
+   apareciam claros sobre o fundo escuro.
+   =================================================================== */
+
+/* Menu ⋮ (opções do chat/anúncio): o botão era cinza-claro (#e4e7e5) e o
+   dropdown branco — destoavam no escuro. */
+body.modo-noturno .menu-opcoes__botao {
+  background: #4a4a4a;
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #d8dbd9;
+}
+body.modo-noturno .menu-opcoes__botao:hover { background: #565656; }
+body.modo-noturno .menu-opcoes__lista {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+body.modo-noturno .menu-opcoes__item { color: #d8dbd9; }
+body.modo-noturno .menu-opcoes__item:hover { background: rgba(154, 209, 158, 0.14); }
+body.modo-noturno .menu-opcoes__item--perigo { color: #e5776b; }
+body.modo-noturno .menu-opcoes__item--perigo:hover { background: rgba(197, 57, 43, 0.18); }
+
+/* Botão de anexo (câmera) do chat: borda e ícone quase invisíveis no escuro. */
+body.modo-noturno .chat-form__anexo {
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #c4c9c6;
+}
+body.modo-noturno .chat-form__anexo:hover { background: rgba(154, 209, 158, 0.14); }
+
+/* Botão do dropdown de Curso (catálogo): tinha só a cor do texto ajustada,
+   mas o fundo continuava branco — texto claro sumia no branco. */
+body.modo-noturno .lista-opcoes__botao {
+  background: #414141;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Card de detalhe do anúncio: continuava branco no escuro (não estava no
+   grupo de cards com override). */
+body.modo-noturno .detalhe {
+  background: #2a2a2a;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+body.modo-noturno .detalhe__info h1 { color: #f2f2f2; }
+body.modo-noturno .detalhe__info p { color: #c4c9c6; }
+body.modo-noturno .detalhe__preco { color: #9ad19e; }
+body.modo-noturno .detalhe__preco.preco--venda { color: #e08bab; }
+
+/* Seta ← do chat: usava verde escuro (--green-700), quase invisível no escuro. */
+body.modo-noturno .chat-voltar { color: #d8dbd9; }
+
+/* Lista de conversas no mobile: a regra dark de .chat-lista (card #414141 com
+   borda) vencia o "sem card" do mobile e desenhava aquela "grade". No celular
+   a lista é plana — aqui desfazemos o card só no mobile (o divisor de cada
+   linha continua). No desktop a lista segue com o card escuro normal. */
+@media (max-width: 767px) {
+  body.modo-noturno .chat-lista { background: none; border: none; }
+}
+
+@media (min-width: 768px) {
+  body.modo-noturno .topbar--app { background: #363636; box-shadow: -12px 0 28px rgba(0, 0, 0, 0.4); }
+}

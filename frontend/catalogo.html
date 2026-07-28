@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Catálogo — Desapego Universitário</title>
+  <meta name="description" content="Veja os itens anunciados por outros estudantes e filtre por categoria." />
+
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2f6f4f" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <link rel="stylesheet" href="css/styles.css?v=69" />
+</head>
+<body>
+
+  <header class="topbar topbar--app">
+    <div class="topbar__inner">
+      <div id="perfil-topo" class="perfil-topo"></div>
+      <nav class="topbar__nav">
+        <a href="index.html" class="btn btn--ghost">Home</a>
+        <a href="catalogo.html" class="btn btn--ghost" aria-current="page">Catálogo</a>
+        <a href="meus-anuncios.html" class="btn btn--ghost">Meus anúncios</a>
+        <a href="admin-denuncias.html" class="btn btn--ghost admin-link-denuncias" id="link-admin-denuncias" hidden>Denúncias</a>
+        <a href="anunciar.html" class="btn btn--primary">Anunciar item</a>
+        <div class="topbar__extras">
+          <button type="button" id="toggle-tema" class="tema-toggle" aria-label="Ativar modo noturno">🌙</button>
+          <a href="termos.html" class="tema-toggle" aria-label="Termos de Uso" title="Termos de Uso"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <a href="index.html" class="logo-home" aria-label="Voltar para a Home" title="Início">
+    <img src="img/mascote-badge.png" alt="Desapego Universitário" />
+  </a>
+  <a href="chat.html" class="chat-atalho chat-atalho--flutuante chat-notif-alvo" aria-label="Abrir o chat" title="Chat">
+    <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  </a>
+  <button type="button" id="toggle-sidebar" class="sidebar-toggle" aria-label="Recolher menu">☰</button>
+
+  <main>
+    <section class="page-section">
+      <div class="page-header">
+        <h1>Catálogo</h1>
+        <p>Busque por nome, filtre por categoria e veja o que a comunidade está compartilhando agora.</p>
+      </div>
+
+      <div class="busca-box-linha">
+        <div class="busca-box">
+          <input type="search" id="input-busca" placeholder="Buscar por título, categoria ou autor..." aria-label="Buscar itens" />
+        </div>
+        <!-- Botão de filtros: só no mobile. Abre/fecha o painel de filtros
+             (que fica escondido por padrão na tela pequena). -->
+        <button type="button" id="btn-filtros" class="btn-filtros" aria-label="Filtros" aria-expanded="false">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="8" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
+        </button>
+      </div>
+
+      <div class="catalogo-filtros" id="catalogo-filtros">
+      <div class="filtros-linha">
+        <div class="filtro-box">
+          <label for="select-categoria">Categoria</label>
+          <select id="select-categoria" aria-label="Filtrar por categoria"></select>
+        </div>
+
+        <div class="filtro-box">
+          <label for="select-tipo">Tipo</label>
+          <select id="select-tipo" aria-label="Filtrar por tipo">
+            <option value="todos">Todos</option>
+            <option value="doacao">Só doação</option>
+            <option value="venda">Só venda</option>
+          </select>
+        </div>
+
+        <div class="filtro-box">
+          <label for="select-ordenar">Ordenar por</label>
+          <select id="select-ordenar" aria-label="Ordenar itens">
+            <option value="relevante">Mais relevante</option>
+            <option value="menor-preco">Menor preço</option>
+            <option value="maior-preco">Maior preço</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="subfiltros" id="subfiltros-livro" hidden>
+        <!-- Curso usa lista própria (não <select>) porque a lista aberta de um
+             select nativo tem a altura definida pelo sistema — aqui a gente
+             precisa limitar a altura e rolar, já que são 44 cursos. -->
+        <div class="filtro-mini filtro-mini--curso">
+          <span class="filtro-mini__rotulo">Curso</span>
+          <!-- <details> abre/fecha sozinho (nativo), sem depender de JS. -->
+          <details class="lista-opcoes" id="curso-dropdown">
+            <summary class="lista-opcoes__botao" id="curso-botao">Todos</summary>
+            <ul class="lista-opcoes__painel" id="curso-painel" aria-label="Curso"></ul>
+          </details>
+        </div>
+        <div class="filtro-mini">
+          <label for="select-materia">Matéria</label>
+          <select id="select-materia"></select>
+        </div>
+        <!-- Autor é busca com sugestões: digita e vai filtrando os nomes. -->
+        <div class="filtro-mini filtro-mini--autor">
+          <label for="autor-input">Autor</label>
+          <div class="busca-sugestoes" id="autor-busca">
+            <input type="search" id="autor-input" placeholder="Todos"
+                   autocomplete="off" aria-label="Buscar autor" />
+            <ul class="busca-sugestoes__painel lista-opcoes__painel" id="autor-painel" hidden></ul>
+          </div>
+        </div>
+      </div>
+      </div><!-- /.catalogo-filtros -->
+
+      <div class="grid-itens" id="grid-catalogo" aria-live="polite"></div>
+      <p class="empty-state" id="catalogo-empty" hidden>Nenhum item nessa categoria ainda.</p>
+    </section>
+  </main>
+
+<template id="tpl-card-item">
+    <article class="card-item">
+      <div class="card-item__img" data-role="img"></div>
+      <div class="card-item__body">
+        <span class="badge" data-role="categoria"></span>
+        <h3 data-role="titulo"></h3>
+        <p data-role="descricao"></p>
+        <span class="card-item__data" data-role="publicado"></span>
+        <div class="card-item__footer">
+          <strong data-role="preco"></strong>
+          <div class="card-item__acoes">
+            <a class="btn btn--ghost btn--sm" data-role="link-oferta" hidden>Oferta</a>
+            <a class="btn btn--ghost btn--sm" data-role="link-editar" hidden>Editar</a>
+            <button class="btn btn--danger btn--sm" data-role="btn-remover" hidden>Remover</button>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script src="js/auth.js?v=69"></script>
+  <script src="js/api.js?v=69"></script>
+  <script src="js/site.js?v=69"></script>
+  <script src="js/catalogo.js?v=69"></script>
+</body>
+</html>

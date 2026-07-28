@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Criar conta — Desapego Universitário</title>
+  <meta name="description" content="Crie sua conta no Desapego Universitário." />
+
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2f6f4f" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <link rel="stylesheet" href="css/styles.css?v=69" />
+
+  <!-- Login com Google (Google Identity Services) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="pagina-cadastro">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a href="index.html" class="btn btn--ghost">Home</a>
+      <button type="button" id="toggle-tema" class="tema-toggle" aria-label="Ativar modo noturno">🌙</button>
+      <a href="termos.html" class="tema-toggle" aria-label="Termos de Uso" title="Termos de Uso"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></a>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-section">
+      <div class="page-header page-header--central">
+        <h1>Criar conta</h1>
+        <p>Cadastre-se pra anunciar itens e acompanhar seus anúncios.</p>
+      </div>
+
+      <div class="form-card form-card--central">
+        <!-- Passo 1: email + senha, ou entrar direto com Google -->
+        <div id="passo-credenciais" class="cadastro-passo">
+          <form id="form-credenciais" class="form" novalidate>
+            <label>
+              <span>Email <span class="campo-obrigatorio">*</span></span>
+              <input type="email" name="email" id="f-email" required />
+            </label>
+            <label>
+              <span>Senha <span class="campo-obrigatorio">*</span></span>
+              <input type="password" name="senha" id="f-senha" required minlength="8" />
+            </label>
+
+            <button type="submit" class="btn btn--primary btn--block">
+              <span class="btn__label">Avançar</span>
+            </button>
+            <p class="form-feedback" id="form-feedback" role="status" aria-live="polite"></p>
+          </form>
+
+          <p class="form-rodape"><a href="recuperar-senha.html">Já tem conta e esqueceu a senha?</a></p>
+
+          <div class="divisor"><span>ou</span></div>
+
+          <div class="google-btn">
+            <div id="g_id_onload"
+                 data-client_id="405533925967-69q034a54g2t1chbfjvbkghb5bbfu5vj.apps.googleusercontent.com"
+                 data-callback="handleGoogleCredencialCadastro"></div>
+            <div class="g_id_signin" data-type="standard" data-shape="pill" data-width="300"></div>
+          </div>
+
+          <p class="form-rodape">Já tem conta? <a href="login.html">Entrar</a></p>
+        </div>
+
+        <!-- Passo 2 (cadastro manual): nome + telefone -->
+        <div id="passo-perfil-manual" class="cadastro-passo" hidden>
+          <p class="cadastro-passo__intro">Só mais um passo pra terminar seu cadastro.</p>
+          <form id="form-perfil-manual" class="form" novalidate>
+            <label>
+              <span>Nome <span class="campo-obrigatorio">*</span></span>
+              <input type="text" name="nome" id="f-nome" required maxlength="80" />
+            </label>
+            <label>
+              Telefone
+              <input type="tel" name="telefone" id="f-telefone" placeholder="(00) 00000-0000" />
+            </label>
+
+            <button type="submit" class="btn btn--primary btn--block">
+              <span class="btn__label">Criar conta</span>
+              <span class="btn__spinner" hidden></span>
+            </button>
+            <p class="form-feedback" id="form-feedback-perfil" role="status" aria-live="polite"></p>
+          </form>
+
+          <p class="form-rodape">Ao criar conta, você concorda com os <a href="termos.html">Termos de Uso</a>.</p>
+        </div>
+
+        <!-- Passo 2 (cadastro com Google): só telefone -->
+        <div id="passo-perfil-google" class="cadastro-passo" hidden>
+          <p class="cadastro-passo__intro">Já identificamos seus dados do Google — falta só o telefone.</p>
+          <form id="form-perfil-google" class="form" novalidate>
+            <label>
+              Telefone
+              <input type="tel" name="telefone" id="f-telefone-google" placeholder="(00) 00000-0000" />
+            </label>
+
+            <button type="submit" class="btn btn--primary btn--block">
+              <span class="btn__label">Criar conta</span>
+              <span class="btn__spinner" hidden></span>
+            </button>
+            <p class="form-feedback" id="form-feedback-google" role="status" aria-live="polite"></p>
+          </form>
+
+          <p class="form-rodape">Ao criar conta, você concorda com os <a href="termos.html">Termos de Uso</a>.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="js/auth.js?v=69"></script>
+  <script src="js/api.js?v=69"></script>
+  <script src="js/site.js?v=69"></script>
+  <script src="js/cadastro.js?v=69"></script>
+</body>
+</html>

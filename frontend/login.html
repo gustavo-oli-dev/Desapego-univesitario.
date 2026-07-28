@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Entrar — Desapego Universitário</title>
+  <meta name="description" content="Acesse sua conta do Desapego Universitário." />
+
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2f6f4f" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <link rel="stylesheet" href="css/styles.css?v=69" />
+
+  <!-- Login com Google (Google Identity Services) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a href="index.html" class="btn btn--ghost">Home</a>
+      <div class="topbar__extras">
+        <button type="button" id="toggle-tema" class="tema-toggle" aria-label="Ativar modo noturno">🌙</button>
+        <a href="termos.html" class="tema-toggle" aria-label="Termos de Uso" title="Termos de Uso"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-section">
+      <div class="page-header page-header--central">
+        <h1>Entrar</h1>
+        <p>Acesse sua conta pra anunciar itens e gerenciar seus anúncios.</p>
+      </div>
+
+      <div class="form-card form-card--central">
+        <div id="passo-login" class="cadastro-passo">
+          <form id="form-login" class="form" novalidate>
+            <label>
+              Email
+              <input type="email" name="email" id="f-email" required />
+            </label>
+            <label>
+              Senha
+              <input type="password" name="senha" id="f-senha" required />
+            </label>
+
+            <button type="submit" class="btn btn--primary btn--block">
+              <span class="btn__label">Entrar</span>
+              <span class="btn__spinner" hidden></span>
+            </button>
+            <p class="form-feedback" id="form-feedback" role="status" aria-live="polite"></p>
+          </form>
+
+          <p class="form-rodape"><a href="recuperar-senha.html">Esqueceu a senha?</a></p>
+
+          <div class="divisor"><span>ou</span></div>
+
+          <div class="google-btn">
+            <div id="g_id_onload"
+                 data-client_id="405533925967-69q034a54g2t1chbfjvbkghb5bbfu5vj.apps.googleusercontent.com"
+                 data-callback="handleGoogleCredential"></div>
+            <div class="g_id_signin" data-type="standard" data-shape="pill" data-width="300"></div>
+          </div>
+
+          <p class="form-rodape">Não tem conta? <a href="cadastro.html">Criar conta</a></p>
+        </div>
+
+        <!-- Passo 2: código de verificação (2FA). Envio de email de verdade
+             ainda não existe no projeto, então o código simulado aparece
+             na tela mesmo — dá pra copiar e colar no demo/vídeo. -->
+        <div id="passo-2fa" class="cadastro-passo" hidden>
+          <p class="cadastro-passo__intro" id="aviso-codigo-simulado"></p>
+          <form id="form-2fa" class="form" novalidate>
+            <label>
+              Código de verificação
+              <input type="text" name="codigo" id="f-codigo" required maxlength="6" inputmode="numeric" placeholder="000000" />
+            </label>
+
+            <button type="submit" class="btn btn--primary btn--block">
+              <span class="btn__label">Confirmar</span>
+              <span class="btn__spinner" hidden></span>
+            </button>
+            <p class="form-feedback" id="form-feedback-2fa" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="js/auth.js?v=69"></script>
+  <script src="js/api.js?v=69"></script>
+  <script src="js/site.js?v=69"></script>
+  <script src="js/login.js?v=69"></script>
+</body>
+</html>
