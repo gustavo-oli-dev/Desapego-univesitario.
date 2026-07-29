@@ -9,7 +9,11 @@
  * Ajuste se o serviço no Render mudar de nome (a URL segue o nome do
  * serviço definido em render.yaml).
  */
-const API_PRODUCAO = "https://desapego-universitario-api.onrender.com";
+// Precisa ser IGUAL ao "name" do serviço em render.yaml, porque o Render
+// deriva o subdomínio do nome. Atenção: esse nome é único no Render inteiro —
+// "desapego-universitario-api" (sem sufixo) pertence a outro projeto do mesmo
+// desafio, e apontar pra lá faria o site conversar com a API de um estranho.
+const API_PRODUCAO = "https://desapego-universitario-api-gustavo.onrender.com";
 
 if (window.location.port !== "8000") {
   window.DESAPEGO_API_URL = API_PRODUCAO;

@@ -9,7 +9,11 @@
 # sem um disco pago ou um banco externo (Postgres, por exemplo).
 services:
   - type: web
-    name: desapego-universitario-api
+    # O nome define o subdomínio (<nome>.onrender.com) e é único GLOBALMENTE,
+    # entre todas as contas do Render. "desapego-universitario-api" já está
+    # tomado por outro projeto do mesmo desafio, então o nome aqui leva um
+    # sufixo próprio — senão o frontend acabaria chamando a API de terceiros.
+    name: desapego-universitario-api-gustavo
     runtime: python
     plan: free
     region: oregon
