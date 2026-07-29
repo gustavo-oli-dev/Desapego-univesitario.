@@ -1,0 +1,416 @@
+/* ===================================================================
+   Landing page (landing.html) — complemento do styles.css
+
+   Estratégia de cor: o calor da ilustração vai MORRENDO conforme a pessoa
+   desce. O hero é quente (madeira e latão, tirados da própria imagem), a
+   seção seguinte é uma faixa areia de transição, e daí pra baixo a página
+   já está na paleta do app (--green-*, --ink, fundo #dfe8f5). Assim o
+   salto pra dentro do app, no fim, é suave em vez de um solavanco.
+
+   Os componentes continuam sendo os do projeto (.btn, .topbar, .brand).
+   =================================================================== */
+body.lp-page {
+  /* ---- quentes: só o hero e a faixa de transição ---- */
+  --lp-madeira-escura: #351b19;
+  --lp-latao: #c4924a;
+  --lp-latao-vivo: #dcae66;
+  --lp-pergaminho: #e2bd8e;
+  --lp-areia: #f2ebe1;
+
+  /* ---- daqui pra baixo, a paleta do app ---- */
+  --lp-fundo: #dfe8f5;                  /* mesmo fundo do app */
+  --lp-faixa: #ffffff;
+  --lp-cartao: #ffffff;
+  --lp-borda: rgba(28, 69, 50, 0.12);   /* mesma borda do .card-item */
+  --lp-titulo: var(--green-900);
+  --lp-texto: var(--ink-soft);
+
+  background: var(--lp-fundo);
+}
+/* Modo noturno: as mesmas cores que o styles.css usa no app. */
+body.lp-page.modo-noturno {
+  --lp-areia: #3a3330;
+  --lp-fundo: #363636;
+  --lp-faixa: #303030;
+  --lp-cartao: #363636;
+  --lp-borda: rgba(255, 255, 255, 0.12);
+  --lp-titulo: #f2f2f2;
+  --lp-texto: #a7ada9;
+}
+
+/* ===================================================================
+   Animações: entram ao rolar, em sequência.
+   O estado inicial só existe quando o JS marca .lp-js no body — sem
+   script, nada fica escondido.
+   =================================================================== */
+body.lp-js .lp-anim {
+  opacity: 0;
+  transform: translateY(22px);
+}
+body.lp-js .lp-anim.is-dentro {
+  opacity: 1;
+  transform: none;
+  /* --i é o índice do item no grupo: o atraso escalona a entrada */
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 80ms),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 80ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  body.lp-js .lp-anim { opacity: 1; transform: none; }
+  body.lp-js .lp-anim.is-dentro { transition: none; }
+}
+
+/* ===================================================================
+   Estrutura
+   =================================================================== */
+.lp-wrap { max-width: var(--max-width); margin: 0 auto; padding: 0 1.2rem; }
+.lp-secao { padding: 3.4rem 0; }
+@media (min-width: 768px) { .lp-secao { padding: 5rem 0; } }
+
+.lp-secao--areia { background: var(--lp-areia); }   /* transição quente→app */
+.lp-secao--faixa { background: var(--lp-faixa); }
+
+.lp-cabecalho { max-width: 60ch; margin-bottom: 2.2rem; }
+.lp-cabecalho--centro { margin-left: auto; margin-right: auto; text-align: center; }
+.lp-cabecalho h2 { color: var(--lp-titulo); font-size: 1.65rem; margin-bottom: 0.55rem; }
+@media (min-width: 768px) { .lp-cabecalho h2 { font-size: 2.15rem; } }
+.lp-cabecalho p { color: var(--lp-texto); margin: 0; font-size: 1.02rem; }
+
+/* ---------- Etiqueta ----------
+   Verde (a do app) por padrão; vira latão só onde o fundo é quente. */
+.lp-etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  margin-bottom: 0.85rem;
+  padding: 0.32em 0.9em;
+  border-radius: 999px;
+  background: var(--green-100);
+  color: var(--green-700);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.lp-hero .lp-etiqueta,
+.lp-secao--areia .lp-etiqueta {
+  background: rgba(196, 146, 74, 0.16);
+  border: 1px solid rgba(196, 146, 74, 0.45);
+  color: #8a6122;
+}
+.lp-hero .lp-etiqueta {
+  background: rgba(226, 189, 142, 0.14);
+  border-color: rgba(226, 189, 142, 0.4);
+  color: var(--lp-latao-vivo);
+}
+body.modo-noturno .lp-etiqueta { background: rgba(154, 209, 158, 0.16); color: #9ad19e; }
+
+/* ---------- Botões ----------
+   O primário NÃO é sobrescrito: é o mesmo verde do app, pra o botão
+   "Entrar no app" ser exatamente igual ao de dentro do app. */
+/* ---------- Topo ---------- */
+.lp-page .topbar {
+  background: transparent;
+  box-shadow: none;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.lp-page .topbar.is-preso {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 12px -6px rgba(28, 69, 50, 0.18);
+}
+body.modo-noturno.lp-page .topbar.is-preso { background: rgba(50, 50, 50, 0.92); }
+/* Sobre o hero (escuro) a marca é clara; depois de rolar, escurece. */
+.lp-page .topbar .brand { color: #f6ede0; transition: color 0.3s ease; }
+.lp-page .topbar .brand span { color: rgba(246, 237, 224, 0.72); }
+.lp-page .topbar.is-preso .brand { color: var(--green-900); }
+.lp-page .topbar.is-preso .brand span { color: var(--ink-soft); }
+body.modo-noturno.lp-page .topbar.is-preso .brand { color: #f2f2f2; }
+
+/* A barra acompanha o hero: largura total e o MESMO respiro lateral, em vez
+   da coluna centralizada de 1120px do app — assim a marca alinha na mesma
+   vertical do título. O vertical é menor que o padrão (0.9rem) porque aqui
+   ela é transparente sobre a ilustração. */
+.lp-page .topbar__inner {
+  max-width: none;
+  padding: 0.4rem 1.2rem;
+}
+@media (min-width: 768px) {
+  .lp-page .topbar__inner { padding-left: 2.2rem; padding-right: 2.2rem; }
+}
+.lp-topo-acoes { display: flex; align-items: center; gap: 0.6rem; }
+.lp-topo-acoes .btn { white-space: nowrap; }
+@media (max-width: 520px) { .lp-page .topbar .brand span { display: none; } }
+
+/* ===================================================================
+   HERO — a única parte totalmente quente: a ilustração ocupa a faixa
+   inteira, com um véu de madeira escura do lado do texto.
+   =================================================================== */
+.lp-hero {
+  position: relative;
+  /* O cabeçalho é sticky e transparente, então o hero sobe por baixo dele.
+     A altura vem medida pelo JS (--lp-topo-altura) em vez de um número
+     fixo: assim mudar o espaçamento da barra não descola o hero. */
+  margin-top: calc(var(--lp-topo-altura, 52px) * -1);
+  padding: 7rem 0 3.5rem;
+  overflow: hidden;
+  background: var(--lp-madeira-escura);
+  color: #f6ede0;
+}
+@media (min-width: 768px) { .lp-hero { padding: 9rem 0 6rem; } }
+
+.lp-hero__fundo {
+  position: absolute;
+  inset: -8% 0 0;           /* folga pro parallax não descobrir a borda */
+  background-image: url("../img/hero-biblioteca-mobile.jpg");
+  background-size: cover;
+  /* Enquadramento: X menor mostra mais da esquerda (a cena "anda" pra
+     direita) e Y menor mostra mais do topo (a cena "desce") — assim a
+     placa da mesa sai de baixo do texto e fica inteira. */
+  background-position: 48% 34%;
+  will-change: transform;
+}
+@media (min-width: 900px) {
+  .lp-hero__fundo {
+    background-image: url("../img/hero-biblioteca.jpg");
+    background-position: 40% 26%;
+  }
+}
+/* Véu escuro do lado do texto; no celular vira vertical. */
+.lp-hero__veu {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(53, 27, 25, 0.62) 0%,
+    rgba(53, 27, 25, 0.86) 55%,
+    rgba(53, 27, 25, 0.95) 100%
+  );
+}
+@media (min-width: 900px) {
+  .lp-hero__veu {
+    background: linear-gradient(
+      100deg,
+      rgba(43, 21, 19, 0.96) 0%,
+      rgba(43, 21, 19, 0.9) 34%,
+      rgba(43, 21, 19, 0.55) 55%,
+      rgba(43, 21, 19, 0.18) 72%,
+      rgba(43, 21, 19, 0.35) 100%
+    );
+  }
+}
+/* Diferente das outras seções, o hero não centraliza o conteúdo numa
+   coluna: ele ocupa a largura toda e o texto fica rente à lateral, com
+   só o respiro lateral padrão (1.2rem no .lp-wrap). */
+.lp-hero__inner { position: relative; z-index: 1; max-width: none; }
+.lp-hero__texto { max-width: 34rem; }
+@media (min-width: 768px) {
+  /* Um pouco mais de folga da borda no desktop, sem voltar a centralizar. */
+  .lp-hero__inner { padding-left: 2.2rem; padding-right: 2.2rem; }
+}
+
+.lp-hero h1 {
+  color: #fff;
+  font-size: 2.05rem;
+  line-height: 1.12;
+  margin-bottom: 0.9rem;
+  text-shadow: 0 2px 14px rgba(24, 10, 8, 0.5);
+}
+@media (min-width: 768px) { .lp-hero h1 { font-size: 3.15rem; } }
+.lp-hero h1 em { font-style: normal; color: var(--lp-latao-vivo); }
+
+.lp-hero__lead {
+  color: rgba(246, 237, 224, 0.9);
+  font-size: 1.02rem;
+  margin-bottom: 1.7rem;
+  text-shadow: 0 1px 10px rgba(24, 10, 8, 0.5);
+}
+@media (min-width: 768px) { .lp-hero__lead { font-size: 1.13rem; } }
+
+.lp-hero__resumo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem 2.4rem;
+  margin-top: 0.4rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid rgba(226, 189, 142, 0.28);
+}
+.lp-hero__resumo strong {
+  display: block;
+  font-size: 1.5rem;
+  color: var(--lp-latao-vivo);
+  line-height: 1.1;
+}
+.lp-hero__resumo span { font-size: 0.86rem; color: rgba(246, 237, 224, 0.75); }
+
+/* ===================================================================
+   OBJETIVOS — faixa areia, a transição entre o hero e o app
+   =================================================================== */
+.lp-objetivos { display: grid; gap: 1rem; }
+@media (min-width: 860px) { .lp-objetivos { grid-template-columns: repeat(2, 1fr); gap: 1.3rem; } }
+
+.lp-objetivo {
+  display: flex;
+  gap: 1.1rem;
+  background: var(--lp-cartao);
+  border: 1px solid var(--lp-borda);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.lp-objetivo:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(28, 69, 50, 0.18); }
+.lp-objetivo__num {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--green-500);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+body.modo-noturno .lp-objetivo__num { background: rgba(154, 209, 158, 0.2); color: #c3e6c5; }
+.lp-objetivo h3 { color: var(--lp-titulo); font-size: 1.1rem; margin-bottom: 0.35rem; }
+.lp-objetivo p { color: var(--lp-texto); margin: 0; font-size: 0.96rem; }
+
+/* ---------- Cartões (plataforma) ---------- */
+.lp-grade-3 { display: grid; gap: 1rem; }
+@media (min-width: 768px) { .lp-grade-3 { grid-template-columns: repeat(3, 1fr); gap: 1.3rem; } }
+
+.lp-cartao {
+  background: var(--lp-cartao);
+  border: 1px solid var(--lp-borda);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem 1.4rem;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.lp-cartao:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(28, 69, 50, 0.18); }
+.lp-cartao h3 { color: var(--lp-titulo); font-size: 1.06rem; margin-bottom: 0.4rem; }
+.lp-cartao p { color: var(--lp-texto); margin: 0; font-size: 0.95rem; }
+
+.lp-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  background: var(--green-100);
+  color: var(--green-700);
+}
+body.modo-noturno .lp-icone { background: rgba(154, 209, 158, 0.16); color: #9ad19e; }
+.lp-icone svg { width: 21px; height: 21px; }
+
+/* ---------- Passos ---------- */
+.lp-passos { display: grid; gap: 0.9rem; counter-reset: passo; }
+@media (min-width: 768px) { .lp-passos { grid-template-columns: repeat(4, 1fr); gap: 1.1rem; } }
+.lp-passo {
+  background: var(--lp-cartao);
+  border: 1px solid var(--lp-borda);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.4rem 1.3rem;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lp-passo:hover { transform: translateY(-4px); }
+/* A numeração é informativa: os passos acontecem nessa ordem. */
+.lp-passo::before {
+  counter-increment: passo;
+  content: counter(passo, decimal-leading-zero);
+  display: block;
+  margin-bottom: 0.7rem;
+  color: var(--green-500);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+body.modo-noturno .lp-passo::before { color: #9ad19e; }
+.lp-passo h3 { color: var(--lp-titulo); font-size: 1.02rem; margin-bottom: 0.35rem; }
+.lp-passo p { color: var(--lp-texto); margin: 0; font-size: 0.92rem; }
+
+/* ---------- Esteira de categorias (rola sozinha) ---------- */
+.lp-esteira {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.lp-esteira__trilho {
+  display: flex;
+  gap: 0.8rem;
+  width: max-content;
+  animation: lp-esteira 34s linear infinite;
+}
+.lp-esteira:hover .lp-esteira__trilho { animation-play-state: paused; }
+@keyframes lp-esteira { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .lp-esteira { overflow-x: auto; }
+  .lp-esteira__trilho { animation: none; }
+}
+.lp-cat {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.75rem 1.2rem;
+  border-radius: 999px;
+  background: var(--lp-cartao);
+  border: 1px solid var(--lp-borda);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--lp-titulo);
+  white-space: nowrap;
+}
+.lp-cat span { font-size: 1.15rem; }
+/* No modo noturno esta seção usa o fundo do body (#363636) e o chip usava
+   --lp-cartao, que é a MESMA cor: os chips sumiam, sobrando só a borda.
+   Aqui eles ganham uma superfície mais clara e borda mais marcada. */
+body.modo-noturno .lp-cat {
+  background: #474747;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #f2f2f2;
+}
+
+/* ---------- Números ---------- */
+.lp-numeros { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+@media (min-width: 768px) { .lp-numeros { grid-template-columns: repeat(4, 1fr); gap: 1rem; } }
+.lp-numero {
+  background: var(--lp-cartao);
+  border: 1px solid var(--lp-borda);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.4rem 1rem;
+  text-align: center;
+}
+.lp-numero strong {
+  display: block;
+  font-size: 1.9rem;
+  line-height: 1.1;
+  color: var(--green-700);
+}
+@media (min-width: 768px) { .lp-numero strong { font-size: 2.3rem; } }
+body.modo-noturno .lp-numero strong { color: #9ad19e; }
+.lp-numero span { display: block; margin-top: 0.3rem; font-size: 0.86rem; color: var(--lp-texto); }
+.lp-nota { margin: 1rem 0 0; font-size: 0.79rem; color: var(--lp-texto); text-align: center; }
+
+/* ---------- Fechamento ---------- */
+.lp-final { text-align: center; }
+.lp-final h2 { color: var(--lp-titulo); font-size: 1.6rem; margin-bottom: 0.55rem; }
+@media (min-width: 768px) { .lp-final h2 { font-size: 2.2rem; } }
+.lp-final p { color: var(--lp-texto); max-width: 50ch; margin: 0 auto 1.5rem; }
+
+/* ---------- Rodapé ---------- */
+.lp-rodape {
+  background: var(--green-900);
+  color: rgba(238, 245, 237, 0.72);
+  padding: 2rem 0;
+  font-size: 0.86rem;
+  text-align: center;
+}
+body.modo-noturno .lp-rodape { background: #2b2b2b; color: #a7ada9; }
+.lp-rodape .brand { justify-content: center; color: #fff; margin-bottom: 0.5rem; }
+.lp-rodape .brand span { color: rgba(238, 245, 237, 0.7); }

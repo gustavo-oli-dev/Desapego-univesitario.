@@ -383,7 +383,7 @@ function configurarHeaderMobile() {
 // topo pra não deixar a pessoa presa. Ficam de fora só os 5 destinos da barra
 // (que já são a navegação) e o anúncio, que tem o "Voltar ao catálogo" próprio.
 const PAGINAS_SEM_VOLTAR = [
-  "", "index.html", "catalogo.html", "anunciar.html", "chat.html", "perfil.html",
+  "", "index.html", "landing.html", "catalogo.html", "anunciar.html", "chat.html", "perfil.html",
   "anuncio.html",
 ];
 

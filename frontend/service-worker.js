@@ -5,10 +5,11 @@
  * só o "esqueleto" da interface (HTML/CSS/JS/imagens) funciona offline.
  */
 
-const CACHE_NAME = "desapego-shell-v251";
+const CACHE_NAME = "desapego-shell-v265";
 
 const APP_SHELL = [
   "./",
+  "./landing.html",
   "./index.html",
   "./catalogo.html",
   "./anunciar.html",
@@ -23,6 +24,7 @@ const APP_SHELL = [
   "./chat.html",
   "./admin-denuncias.html",
   "./css/styles.css",
+  "./css/landing.css",
   "./js/config.js",
   "./js/auth.js",
   "./js/api.js",
@@ -39,9 +41,12 @@ const APP_SHELL = [
   "./js/recuperar-senha.js",
   "./js/chat.js",
   "./js/admin-denuncias.js",
+  "./js/landing.js",
   "./manifest.json",
   "./img/mascote-hero.jpg",
   "./img/mascote-badge.png",
+  "./img/hero-biblioteca.jpg",
+  "./img/hero-biblioteca-mobile.jpg",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
 ];

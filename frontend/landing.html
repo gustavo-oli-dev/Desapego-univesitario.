@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Desapego Universitário — Economia Circular do Campus</title>
+  <meta name="description" content="Plataforma que conecta estudantes do mesmo campus para doar ou vender livros, calculadoras, eletrônicos, jalecos e móveis — dando uma segunda vida ao que não é mais usado." />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#351b19" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <!-- A ilustração do hero é o maior peso da página: carrega cedo. -->
+  <link rel="preload" as="image" href="img/hero-biblioteca-mobile.jpg" media="(max-width: 899px)" />
+  <link rel="preload" as="image" href="img/hero-biblioteca.jpg" media="(min-width: 900px)" />
+
+  <link rel="stylesheet" href="css/styles.css?v=85" />
+  <link rel="stylesheet" href="css/landing.css?v=85" />
+</head>
+<body class="lp-page">
+
+  <header class="topbar" id="lp-topbar">
+    <div class="topbar__inner">
+      <a href="index.html" class="brand" aria-label="Desapego Universitário">
+        <img src="img/mascote-badge.png" alt="" class="brand__icon" /> Desapego<span>Universitário</span>
+      </a>
+      <div class="lp-topo-acoes">
+        <button type="button" id="toggle-tema" class="tema-toggle" aria-label="Ativar modo noturno">🌙</button>
+        <a href="index.html" class="btn btn--primary btn--sm">Entrar no app</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===================== HERO ===================== -->
+    <section class="lp-hero">
+      <!-- Fundo e véu separados: o fundo é o que se move no parallax. -->
+      <div class="lp-hero__fundo" id="lp-hero-fundo" aria-hidden="true"></div>
+      <div class="lp-hero__veu" aria-hidden="true"></div>
+
+      <div class="lp-wrap lp-hero__inner">
+        <div class="lp-hero__texto" data-anim-grupo>
+          <span class="lp-etiqueta lp-anim">♻️ Economia circular no campus</span>
+          <h1 class="lp-anim">O que sobra pra você é <em>o que falta pra alguém</em>.</h1>
+          <p class="lp-hero__lead lp-anim">
+            O Desapego Universitário conecta estudantes da mesma universidade para doar
+            ou vender o que já não usam — livros, calculadoras, eletrônicos, jalecos e
+            móveis. Menos coisa parada, menos desperdício e um começo de curso mais
+            barato para quem está chegando.
+          </p>
+          <div class="lp-hero__resumo lp-anim">
+            <div><strong data-alvo="1240">1.240</strong><span>itens anunciados</span></div>
+            <div><strong data-alvo="486">486</strong><span>doações concluídas</span></div>
+            <div><strong data-alvo="850">850</strong><span>estudantes ativos</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== OBJETIVOS (o foco da landing) ===================== -->
+    <section class="lp-secao lp-secao--areia" id="objetivos">
+      <div class="lp-wrap">
+        <div class="lp-cabecalho lp-cabecalho--centro lp-anim">
+          <span class="lp-etiqueta">Objetivos do projeto</span>
+          <h2>O que o Desapego Universitário quer resolver</h2>
+          <p>Quatro objetivos guiaram cada decisão da plataforma — da forma de anunciar ao jeito de fechar negócio.</p>
+        </div>
+
+        <div class="lp-objetivos" data-anim-grupo>
+          <article class="lp-objetivo lp-anim">
+            <div class="lp-objetivo__num" aria-hidden="true">1</div>
+            <div>
+              <h3>Baratear o custo de estudar</h3>
+              <p>
+                Livro, calculadora e jaleco pesam centenas de reais logo no primeiro
+                semestre. Comprar de um veterano, em bom estado, custa uma fração do
+                preço novo — e o dinheiro fica dentro da própria comunidade.
+              </p>
+            </div>
+          </article>
+
+          <article class="lp-objetivo lp-anim">
+            <div class="lp-objetivo__num" aria-hidden="true">2</div>
+            <div>
+              <h3>Dar destino ao que está parado</h3>
+              <p>
+                Terminada a disciplina, o material encosta na estante em ótimo estado.
+                A plataforma transforma esse item parado em algo útil para outra pessoa
+                — e em dinheiro de volta para você.
+              </p>
+            </div>
+          </article>
+
+          <article class="lp-objetivo lp-anim">
+            <div class="lp-objetivo__num" aria-hidden="true">3</div>
+            <div>
+              <h3>Incentivar a doação, não só a venda</h3>
+              <p>
+                Doar é tão simples quanto vender: um clique marca o anúncio como doação,
+                e ele ganha destaque próprio no catálogo. Quem não pode pagar continua
+                tendo acesso ao material.
+              </p>
+            </div>
+          </article>
+
+          <article class="lp-objetivo lp-anim">
+            <div class="lp-objetivo__num" aria-hidden="true">4</div>
+            <div>
+              <h3>Reduzir o descarte no fim do semestre</h3>
+              <p>
+                Muita coisa ainda útil vira lixo por falta de um lugar onde oferta e
+                procura se encontrem. Cada item reaproveitado é um a menos indo para o
+                descarte — economia circular na prática.
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== COMO FUNCIONA ===================== -->
+    <section class="lp-secao lp-secao--faixa">
+      <div class="lp-wrap">
+        <div class="lp-cabecalho lp-cabecalho--centro lp-anim">
+          <span class="lp-etiqueta">Como funciona</span>
+          <h2>Do anúncio à entrega, em quatro passos</h2>
+          <p>Tudo acontece dentro do campus, sem intermediário e sem frete.</p>
+        </div>
+
+        <div class="lp-passos" data-anim-grupo>
+          <article class="lp-passo lp-anim">
+            <h3>Anuncie</h3>
+            <p>Foto, título e preço — ou marque como doação. Leva cerca de um minuto.</p>
+          </article>
+          <article class="lp-passo lp-anim">
+            <h3>Converse</h3>
+            <p>Quem se interessar fala com você pelo chat da própria plataforma.</p>
+          </article>
+          <article class="lp-passo lp-anim">
+            <h3>Combine</h3>
+            <p>Vocês marcam um ponto no campus e fazem a entrega em mãos.</p>
+          </article>
+          <article class="lp-passo lp-anim">
+            <h3>Confirme</h3>
+            <p>Os dois lados confirmam e a negociação entra no histórico do perfil.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CATEGORIAS (esteira) ===================== -->
+    <section class="lp-secao">
+      <div class="lp-wrap">
+        <div class="lp-cabecalho lp-cabecalho--centro lp-anim">
+          <span class="lp-etiqueta">O que circula</span>
+          <h2>Tudo que um estudante deixa de usar</h2>
+        </div>
+      </div>
+
+      <!-- Esteira: a lista é duplicada no HTML pra a rolagem ser contínua
+           (quando a primeira metade sai, a segunda já está no lugar). -->
+      <div class="lp-esteira lp-anim">
+        <div class="lp-esteira__trilho">
+          <div class="lp-cat"><span aria-hidden="true">📚</span> Livros</div>
+          <div class="lp-cat"><span aria-hidden="true">💻</span> Eletrônicos</div>
+          <div class="lp-cat"><span aria-hidden="true">🧮</span> Calculadoras</div>
+          <div class="lp-cat"><span aria-hidden="true">📓</span> Material de Estudo</div>
+          <div class="lp-cat"><span aria-hidden="true">🪑</span> Móveis</div>
+          <div class="lp-cat"><span aria-hidden="true">👕</span> Vestimentas</div>
+          <div class="lp-cat"><span aria-hidden="true">🎁</span> Outros</div>
+          <div class="lp-cat"><span aria-hidden="true">♻️</span> Doações</div>
+          <!-- cópia (aria-hidden: é repetição visual, não conteúdo novo) -->
+          <div class="lp-cat" aria-hidden="true"><span>📚</span> Livros</div>
+          <div class="lp-cat" aria-hidden="true"><span>💻</span> Eletrônicos</div>
+          <div class="lp-cat" aria-hidden="true"><span>🧮</span> Calculadoras</div>
+          <div class="lp-cat" aria-hidden="true"><span>📓</span> Material de Estudo</div>
+          <div class="lp-cat" aria-hidden="true"><span>🪑</span> Móveis</div>
+          <div class="lp-cat" aria-hidden="true"><span>👕</span> Vestimentas</div>
+          <div class="lp-cat" aria-hidden="true"><span>🎁</span> Outros</div>
+          <div class="lp-cat" aria-hidden="true"><span>♻️</span> Doações</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== A PLATAFORMA ===================== -->
+    <section class="lp-secao lp-secao--faixa">
+      <div class="lp-wrap">
+        <div class="lp-cabecalho lp-anim">
+          <span class="lp-etiqueta">A plataforma</span>
+          <h2>Feita para negociar com segurança</h2>
+          <p>Recursos que existem justamente porque a troca acontece entre pessoas que ainda não se conhecem.</p>
+        </div>
+
+        <div class="lp-grade-3" data-anim-grupo>
+          <article class="lp-cartao lp-anim">
+            <div class="lp-icone" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            </div>
+            <h3>Chat interno</h3>
+            <p>A conversa acontece dentro da plataforma — ninguém precisa entregar o telefone para perguntar um preço.</p>
+          </article>
+
+          <article class="lp-cartao lp-anim">
+            <div class="lp-icone" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <h3>Confirmação dos dois lados</h3>
+            <p>A venda só é fechada quando comprador e vendedor confirmam, e isso alimenta o histórico público de cada perfil.</p>
+          </article>
+
+          <article class="lp-cartao lp-anim">
+            <div class="lp-icone" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h3>Denúncia e moderação</h3>
+            <p>Qualquer anúncio pode ser denunciado e vai para um painel de moderação, com as regras descritas nos Termos de Uso.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== NÚMEROS ===================== -->
+    <section class="lp-secao lp-secao--faixa">
+      <div class="lp-wrap">
+        <div class="lp-cabecalho lp-cabecalho--centro lp-anim">
+          <span class="lp-etiqueta">Impacto</span>
+          <h2>O campus em movimento</h2>
+        </div>
+
+        <div class="lp-numeros" data-anim-grupo>
+          <!-- O valor final já vem no HTML: sem JS os números continuam
+               corretos (o script só anima a contagem a partir do zero). -->
+          <div class="lp-numero lp-anim"><strong data-alvo="1240">1.240</strong><span>itens anunciados</span></div>
+          <div class="lp-numero lp-anim"><strong data-alvo="486">486</strong><span>doações concluídas</span></div>
+          <div class="lp-numero lp-anim"><strong data-alvo="850">850</strong><span>estudantes ativos</span></div>
+          <div class="lp-numero lp-anim"><strong data-prefixo="R$ " data-alvo="92" data-sufixo=" mil">R$ 92 mil</strong><span>economizados</span></div>
+        </div>
+        <p class="lp-nota">Números ilustrativos, para demonstração do projeto.</p>
+      </div>
+    </section>
+
+    <!-- ===================== FECHAMENTO ===================== -->
+    <section class="lp-secao lp-secao--faixa">
+      <div class="lp-wrap lp-final lp-anim">
+        <h2>Tem algo parado aí?</h2>
+        <p>Leva um minuto para anunciar — e do outro lado tem alguém do seu campus procurando exatamente isso.</p>
+        <a href="index.html" class="btn btn--primary">Entrar no app</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="lp-rodape">
+    <div class="lp-wrap">
+      <a href="index.html" class="brand">
+        <img src="img/mascote-badge.png" alt="" class="brand__icon" /> Desapego<span>Universitário</span>
+      </a>
+      <p style="margin: 0;">© 2026 — projeto acadêmico de economia circular universitária.</p>
+    </div>
+  </footer>
+
+  <!-- site.js entra aqui pelo botão de modo noturno (e mantém o
+       comportamento igual ao do resto do app). -->
+  <script src="js/config.js?v=85"></script>
+  <script src="js/auth.js?v=85"></script>
+  <script src="js/api.js?v=85"></script>
+  <script src="js/site.js?v=85"></script>
+  <script src="js/landing.js?v=85"></script>
+</body>
+</html>
