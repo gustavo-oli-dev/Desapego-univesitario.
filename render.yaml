@@ -15,7 +15,12 @@ services:
     region: oregon
     rootDir: backend
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    # O seed roda antes da API porque o disco é efêmero: a cada boot o banco
+    # volta vazio, e sem isso o catálogo apareceria sem nenhum anúncio. Ele é
+    # idempotente e não acessa a rede (as fotos vêm de backend/seed_fotos/),
+    # então custa menos de 1 segundo. O "|| true" garante que uma falha no
+    # seed não impeça a API de subir.
+    startCommand: python seed_agentes.py || true; uvicorn main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /opcoes
     envVars:
       # Mesma versão do Python usada e testada em desenvolvimento.

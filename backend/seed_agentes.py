@@ -1,15 +1,29 @@
 """
 Popula o banco com 20 "agentes" (estudantes fictícios) e anúncios realistas,
-com fotos reais baixadas por categoria. Idempotente: agentes já criados (pelo
-email) são pulados. Rodar de dentro de backend/:  venv/bin/python seed_agentes.py
+com fotos reais. Idempotente: agentes e anúncios já criados são pulados, então
+pode rodar quantas vezes quiser.
+
+    venv/bin/python seed_agentes.py
+
+As fotos vêm de seed_fotos/ (versionadas no repositório, nomeadas pelo título
+do anúncio) — nada é baixado da internet. Isso importa no deploy: o disco do
+Render free é efêmero, então o seed roda a cada boot da instância, e depender
+de rede ali deixaria a subida lenta e sujeita a falha de API de terceiro.
 """
-import sqlite3, os, json, random, urllib.request, urllib.parse, unicodedata
+import sqlite3, os, json, random, shutil, unicodedata
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
+import database
+
 random.seed(42)
-DB = "desapego.db"
-DIR = Path("static/uploads/anuncios")
+# Caminhos presos ao arquivo, não ao diretório de onde se roda o script: é o
+# mesmo critério do database.py, e evita o seed gravar num banco diferente do
+# que a API usa quando o processo sobe de outra pasta.
+BASE = Path(__file__).parent
+DB = BASE / "desapego.db"
+DIR = BASE / "static" / "uploads" / "anuncios"
+DIR_FOTOS_SEED = BASE / "seed_fotos"
 DIR.mkdir(parents=True, exist_ok=True)
 SENHA_PADRAO = "senha123"   # todos os agentes usam a mesma senha (facilita testar)
 
@@ -26,44 +40,17 @@ def slug(txt: str) -> str:
     return "".join(ch if ch.isalnum() else "-" for ch in t.lower()).strip("-")
 
 
-def _openverse_url(keyword: str):
-    """Primeira URL de imagem relevante no Openverse pra 'keyword' (busca por
-    termo, resultado coerente). None se não achar."""
-    import json
-    api = f"https://api.openverse.org/v1/images/?q={urllib.parse.quote(keyword)}&page_size=5&mature=false"
-    try:
-        req = urllib.request.Request(api, headers={"User-Agent": "Mozilla/5.0"})
-        dados = json.loads(urllib.request.urlopen(req, timeout=25).read())
-        for r in dados.get("results", []):
-            if r.get("url"):
-                return r["url"]
-    except Exception:
-        pass
-    return None
-
-
-def baixar_foto(keyword: str, nome_arquivo: str):
-    """Baixa uma foto REAL e coerente com a 'keyword'. Fonte principal: Openverse
-    (busca por termo). Reserva: loremflickr pela mesma tag. NÃO usa picsum, que
-    devolvia imagem 100% aleatória (era o que deixava anúncio 'nada a ver')."""
-    dest = DIR / nome_arquivo
-    fontes = [
-        _openverse_url(keyword),
-        f"https://loremflickr.com/640/480/{keyword}?random={random.randint(1, 999999)}",
-    ]
-    for url in fontes:
-        if not url:
-            continue
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-            data = urllib.request.urlopen(req, timeout=20).read()
-            if len(data) < 3000:  # imagem quebrada/placeholder minúsculo
-                continue
-            dest.write_bytes(data)
-            return f"/static/uploads/anuncios/{nome_arquivo}"
-        except Exception as e:
-            print(f"    falha {str(url)[:40]}...: {e}")
-    return None
+def foto_do_anuncio(titulo: str, nome_arquivo: str):
+    """Copia a foto versionada em seed_fotos/ para a pasta de uploads e devolve
+    o caminho que vai no banco. As fotos são nomeadas pelo título do anúncio
+    (slug), então cada item recebe exatamente a imagem que combina com ele.
+    Devolve None se não houver foto — nesse caso o card cai no ícone da
+    categoria, que já é o comportamento padrão do frontend."""
+    origem = DIR_FOTOS_SEED / f"{slug(titulo)}.jpg"
+    if not origem.exists():
+        return None
+    shutil.copy2(origem, DIR / nome_arquivo)
+    return f"/static/uploads/anuncios/{nome_arquivo}"
 
 
 # --- 20 agentes (nome, curso, turno) ---------------------------------------
@@ -131,6 +118,10 @@ ITENS = {
 
 
 def main():
+    # Garante as tabelas: no deploy o seed roda ANTES da API subir, então o
+    # banco pode nem existir ainda. init_db é idempotente (CREATE IF NOT EXISTS).
+    database.init_db()
+
     conn = sqlite3.connect(DB)
     conn.row_factory = sqlite3.Row
     agora = datetime.now(timezone.utc)
@@ -177,8 +168,8 @@ def main():
         if conn.execute("SELECT 1 FROM anuncios WHERE titulo=?", (titulo,)).fetchone():
             continue
 
-        print(f"  [{idx+1}/{len(todos_itens)}] baixando foto '{keyword}' p/ {titulo[:30]}...")
-        caminho = baixar_foto(keyword, f"agente-{slug(titulo)[:40]}-{idx}.jpg")
+        caminho = foto_do_anuncio(titulo, f"agente-{slug(titulo)[:40]}-{idx}.jpg")
+        print(f"  [{idx+1}/{len(todos_itens)}] {titulo[:38]:<38} {'com foto' if caminho else 'sem foto'}")
 
         curso_json = json.dumps([conn.execute("SELECT curso FROM usuarios WHERE id=?", (dono,)).fetchone()["curso"]]) if categoria == "Livros" else "[]"
         materia_json = json.dumps([materia]) if materia else "[]"

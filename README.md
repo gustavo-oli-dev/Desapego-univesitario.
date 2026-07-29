@@ -27,10 +27,13 @@ uvicorn main:app --reload --port 8001
 A API sobe em `http://localhost:8001`. O banco SQLite (`desapego.db`) e as pastas de
 upload são criados automaticamente na primeira execução.
 
-**Opcional — popular com dados de exemplo** (20 usuários fictícios com anúncios e fotos reais):
+**Opcional — popular com dados de exemplo** (20 usuários fictícios com anúncios e fotos):
 ```bash
 python seed_agentes.py
 ```
+As fotos vêm de `backend/seed_fotos/` (versionadas, nomeadas pelo título do anúncio), não
+da internet — o script roda offline em menos de um segundo e pode ser executado quantas
+vezes quiser, pois pula o que já existe.
 
 **Opcional — email real** (2FA de login e recuperação de senha por email de verdade, em
 vez do código aparecer na tela): copie `backend/.env.example` para `backend/.env` e
@@ -188,8 +191,11 @@ de saber a URL do Netlify.
 > avaliação (o edital permite banco em arquivo "desde que funcione durante os testes"),
 > mas não para produção real sem um disco pago ou um banco externo.
 >
-> Consequência prática: **o catálogo sobe vazio**. Para ver a plataforma com conteúdo,
-> crie uma conta e publique alguns anúncios, ou rode o `seed_agentes.py` localmente.
+> Por isso o `startCommand` roda o `seed_agentes.py` antes da API: a cada boot o catálogo
+> é repovoado com os 20 estudantes fictícios e seus anúncios. Como as fotos são lidas do
+> próprio repositório, isso leva menos de um segundo e não depende de rede.
+>
+> O que **não** sobrevive a um reinício: contas e anúncios criados por visitantes.
 
 _(links da aplicação em produção — a preencher após o deploy)_
 - Backend (API): —
