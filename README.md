@@ -44,9 +44,14 @@ cd frontend
 python3 -m http.server 8000
 ```
 
-Acesse `http://localhost:8000/index.html`. O frontend detecta sozinho o endereço da API
-(porta 8000 → API em 8001 no mesmo host), inclusive ao abrir pelo celular na mesma rede
-Wi-Fi.
+Duas páginas de entrada:
+
+- `http://localhost:8000/landing.html` — **landing page pública**, que apresenta o
+  projeto e seus objetivos (é a página de divulgação, não o sistema).
+- `http://localhost:8000/index.html` — **o app**: catálogo, anúncios, chat e perfil.
+
+O frontend detecta sozinho o endereço da API (porta 8000 → API em 8001 no mesmo host),
+inclusive ao abrir pelo celular na mesma rede Wi-Fi.
 
 ## Tecnologias utilizadas
 
@@ -182,6 +187,9 @@ de saber a URL do Netlify.
 > são apagados a cada novo deploy ou quando a instância volta de ociosa. Aceitável para
 > avaliação (o edital permite banco em arquivo "desde que funcione durante os testes"),
 > mas não para produção real sem um disco pago ou um banco externo.
+>
+> Consequência prática: **o catálogo sobe vazio**. Para ver a plataforma com conteúdo,
+> crie uma conta e publique alguns anúncios, ou rode o `seed_agentes.py` localmente.
 
 _(links da aplicação em produção — a preencher após o deploy)_
 - Backend (API): —
