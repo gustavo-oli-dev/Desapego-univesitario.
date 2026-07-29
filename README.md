@@ -197,6 +197,19 @@ de saber a URL do Netlify.
 >
 > O que **não** sobrevive a um reinício: contas e anúncios criados por visitantes.
 
-_(links da aplicação em produção — a preencher após o deploy)_
-- Backend (API): —
-- Frontend (PWA): —
+### Aplicação no ar
+
+- **Site (landing + app):** https://desapego-uniersitario.netlify.app
+  - a raiz mostra a landing de apresentação; o app fica em
+    [`/index.html`](https://desapego-uniersitario.netlify.app/index.html)
+- **API:** https://desapego-universitario-api-gustavo.onrender.com
+  - exemplos: [`/opcoes`](https://desapego-universitario-api-gustavo.onrender.com/opcoes) ·
+    [`/anuncios`](https://desapego-universitario-api-gustavo.onrender.com/anuncios)
+
+> A API está no plano free do Render, que suspende a instância após ~15 min sem acesso.
+> A primeira requisição depois disso pode levar até ~30 s (cold start); as seguintes
+> respondem em menos de 1 s.
+>
+> O login usa verificação em 2 etapas. Como o envio de email não está configurado em
+> produção, o código de 6 dígitos aparece na própria tela — dá para testar o fluxo
+> completo sem precisar de caixa de entrada.
