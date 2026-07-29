@@ -7,10 +7,18 @@
 # A raiz do site serve a landing (a página que apresenta o projeto), e o app
 # continua em /index.html. status 200 é reescrita, não redirecionamento: a
 # URL visitada continua sendo "/", sem pular pra /landing.html na barra.
+#
+# force = true é obrigatório aqui: por padrão o Netlify só aplica a regra
+# quando NÃO existe arquivo no caminho, e "/" resolve pro index.html, que
+# existe — sem o force a regra é silenciosamente ignorada.
+#
+# Não afeta o PWA: o start_url do manifest.json aponta pra ./index.html,
+# então instalar o app continua abrindo o app, não a landing.
 [[redirects]]
   from = "/"
   to = "/landing.html"
   status = 200
+  force = true
 
 # O manifest.json e o service-worker.js controlam sua própria atualização
 # via CACHE_NAME (service-worker.js) e "?v=N" nos assets (ver js/site.js) —
