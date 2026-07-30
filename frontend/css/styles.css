@@ -815,6 +815,21 @@ body.modo-noturno .chat-atalho__badge { box-shadow: 0 0 0 2px #363636; }
   white-space: nowrap;
   min-width: 0;
 }
+/* "×" pra tirar tudo que foi marcado sem precisar abrir o painel e
+   declicar item por item — só aparece quando tem algo selecionado. */
+.lista-opcoes__limpar {
+  flex: none;
+  width: 1.3em;
+  height: 1.3em;
+  line-height: 1;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--ink-soft);
+  font-size: 1rem;
+  cursor: pointer;
+}
+.lista-opcoes__limpar:hover { background: rgba(28, 69, 50, 0.08); color: var(--ink); }
 /* Painel com um campo de busca embutido, pra filtrar os 44 cursos rápido
    sem precisar rolar tudo. A busca fica fixa no topo (flex: none) e só a
    lista rola dentro do espaço que sobra — sem isso, o painel (que já tem
@@ -2189,6 +2204,8 @@ body.modo-noturno .lista-opcoes__busca {
   color: #f2f2f2;
 }
 body.modo-noturno .lista-opcoes__busca:focus { border-color: #9ad19e; }
+body.modo-noturno .lista-opcoes__limpar { color: #a7ada9; }
+body.modo-noturno .lista-opcoes__limpar:hover { background: rgba(255, 255, 255, 0.1); color: #f2f2f2; }
 
 /* Área de filtros do catálogo: os cartões continuavam brancos no modo
    noturno. Sem isto o texto claro do Curso ficava branco sobre branco. */

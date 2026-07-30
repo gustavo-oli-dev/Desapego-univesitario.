@@ -763,7 +763,7 @@ MAX_FOTOS_ANUNCIO = 5
 @app.post("/anuncios", status_code=201)
 async def criar_anuncio(
     titulo: str = Form(..., min_length=1, max_length=60),
-    descricao: str = Form(..., min_length=1, max_length=300),
+    descricao: str = Form("", max_length=300),
     categoria: str = Form(...),
     tipo: str = Form(...),
     preco: Optional[float] = Form(None),
@@ -839,7 +839,7 @@ async def criar_anuncio(
 async def editar_anuncio(
     anuncio_id: int,
     titulo: str = Form(..., min_length=1, max_length=60),
-    descricao: str = Form(..., min_length=1, max_length=300),
+    descricao: str = Form("", max_length=300),
     imagens_removidas: List[str] = Form([]),
     fotos: List[UploadFile] = File([]),
     usuario_id: int = Depends(obter_usuario_atual),

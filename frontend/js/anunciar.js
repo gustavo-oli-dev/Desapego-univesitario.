@@ -29,16 +29,32 @@ function configurarCampoMultiEscolha(campo, valoresPermitidos) {
   const wrapper = document.querySelector(`.campo-multiescolha[data-campo="${campo}"]`);
   const dropdown = wrapper.querySelector(".lista-opcoes");
   const botaoTexto = wrapper.querySelector(".lista-opcoes__botao-texto");
+  const botaoLimpar = wrapper.querySelector(".lista-opcoes__limpar");
   const busca = wrapper.querySelector(".lista-opcoes__busca");
   const lista = wrapper.querySelector(".lista-opcoes__lista");
   const selecionados = new Set();
+
+  function limparSelecao() {
+    selecionados.clear();
+    atualizarBotao();
+    renderLista();
+  }
 
   function atualizarBotao() {
     const texto = [...selecionados].join(", ");
     botaoTexto.textContent = texto || "Selecionar...";
     // title dá o texto completo no hover, já que o botão trunca com "..."
     dropdown.querySelector(".lista-opcoes__botao").title = texto;
+    botaoLimpar.hidden = selecionados.size === 0;
   }
+
+  // O botão de limpar fica dentro do <summary> — sem parar a propagação, o
+  // clique nele também alternaria o <details> (abre/fecha o painel).
+  botaoLimpar.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    limparSelecao();
+  });
 
   function criarItem(valor) {
     const item = document.createElement("li");
@@ -101,11 +117,7 @@ function configurarCampoMultiEscolha(campo, valoresPermitidos) {
       atualizarBotao();
       renderLista();
     },
-    reset: () => {
-      selecionados.clear();
-      atualizarBotao();
-      renderLista();
-    },
+    reset: limparSelecao,
   };
 }
 
@@ -378,7 +390,7 @@ function configurarFormulario(camposMultiLivro, idEditando, emOferta, precoAtual
     // Editando: só título, descrição e fotos vão pro servidor — o resto
     // já está travado no formulário e o backend nem aceita mudar.
     if (idEditando) {
-      if (!titulo || !descricao) {
+      if (!titulo) {
         feedback.textContent = "Preencha os campos obrigatórios antes de salvar.";
         feedback.classList.add("is-error");
         return;
@@ -423,7 +435,7 @@ function configurarFormulario(camposMultiLivro, idEditando, emOferta, precoAtual
       dados.curso = camposMultiLivro.curso.getSelecionados();
     }
 
-    if (!dados.titulo || !dados.descricao || (dados.tipo === "venda" && !dados.preco)) {
+    if (!dados.titulo || (dados.tipo === "venda" && !dados.preco)) {
       feedback.textContent = "Preencha os campos obrigatórios antes de publicar.";
       feedback.classList.add("is-error");
       return;
