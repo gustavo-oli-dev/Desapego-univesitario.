@@ -199,9 +199,9 @@ de saber a URL do Netlify.
 
 ### Aplicação no ar
 
-- **Site (landing + app):** https://desapego-uniersitario.netlify.app
+- **Site (landing + app):** https://desapego-univesitario.netlify.app
   - a raiz mostra a landing de apresentação; o app fica em
-    [`/index.html`](https://desapego-uniersitario.netlify.app/index.html)
+    [`/index.html`](https://desapego-univesitario.netlify.app/index.html)
 - **API:** https://desapego-universitario-api-gustavo.onrender.com
   - exemplos: [`/opcoes`](https://desapego-universitario-api-gustavo.onrender.com/opcoes) ·
     [`/anuncios`](https://desapego-universitario-api-gustavo.onrender.com/anuncios)

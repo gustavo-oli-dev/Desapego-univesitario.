@@ -16,8 +16,8 @@
   <link rel="preload" as="image" href="img/hero-biblioteca-mobile.jpg" media="(max-width: 899px)" />
   <link rel="preload" as="image" href="img/hero-biblioteca.jpg" media="(min-width: 900px)" />
 
-  <link rel="stylesheet" href="css/styles.css?v=86" />
-  <link rel="stylesheet" href="css/landing.css?v=86" />
+  <link rel="stylesheet" href="css/styles.css?v=87" />
+  <link rel="stylesheet" href="css/landing.css?v=87" />
 </head>
 <body class="lp-page">
 
@@ -241,6 +241,29 @@
       </div>
     </section>
 
+    <!-- ===================== VITRINE =====================
+         Amostra do catálogo com filtro por categoria. É de propósito uma
+         prévia curta (4 itens): quem quiser buscar de verdade entra no app,
+         onde há busca, sessão e a listagem completa. -->
+    <section class="lp-secao">
+      <div class="lp-wrap">
+        <div class="lp-cabecalho lp-cabecalho--centro lp-anim">
+          <span class="lp-etiqueta">Circulando agora</span>
+          <h2>Uma amostra do que está anunciado</h2>
+          <p>Itens publicados de verdade por estudantes — filtre por categoria para ver outros tipos.</p>
+        </div>
+
+        <div class="chips lp-anim" id="lp-filtros" role="group" aria-label="Filtrar por categoria"></div>
+
+        <div class="lp-vitrine-grade" id="lp-grade" aria-live="polite"></div>
+        <p class="empty-state" id="lp-aviso" hidden></p>
+
+        <div class="section-footer lp-anim">
+          <a href="index.html" class="btn btn--ghost">Ver o catálogo completo</a>
+        </div>
+      </div>
+    </section>
+
     <!-- ===================== FECHAMENTO ===================== -->
     <section class="lp-secao lp-secao--faixa">
       <div class="lp-wrap lp-final lp-anim">
@@ -250,6 +273,28 @@
       </div>
     </section>
   </main>
+
+  <!-- template de card de item (usado pelo renderGrid do site.js, o mesmo
+       componente do catálogo — os cards ficam idênticos aos do app) -->
+  <template id="tpl-card-item">
+    <article class="card-item">
+      <div class="card-item__img" data-role="img"></div>
+      <div class="card-item__body">
+        <span class="badge" data-role="categoria"></span>
+        <h3 data-role="titulo"></h3>
+        <p data-role="descricao"></p>
+        <span class="card-item__data" data-role="publicado"></span>
+        <div class="card-item__footer">
+          <strong data-role="preco"></strong>
+          <div class="card-item__acoes">
+            <a class="btn btn--ghost btn--sm" data-role="link-oferta" hidden>Oferta</a>
+            <a class="btn btn--ghost btn--sm" data-role="link-editar" hidden>Editar</a>
+            <button class="btn btn--danger btn--sm" data-role="btn-remover" hidden>Remover</button>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
 
   <footer class="lp-rodape">
     <div class="lp-wrap">
@@ -262,10 +307,10 @@
 
   <!-- site.js entra aqui pelo botão de modo noturno (e mantém o
        comportamento igual ao do resto do app). -->
-  <script src="js/config.js?v=86"></script>
-  <script src="js/auth.js?v=86"></script>
-  <script src="js/api.js?v=86"></script>
-  <script src="js/site.js?v=86"></script>
-  <script src="js/landing.js?v=86"></script>
+  <script src="js/config.js?v=87"></script>
+  <script src="js/auth.js?v=87"></script>
+  <script src="js/api.js?v=87"></script>
+  <script src="js/site.js?v=87"></script>
+  <script src="js/landing.js?v=87"></script>
 </body>
 </html>

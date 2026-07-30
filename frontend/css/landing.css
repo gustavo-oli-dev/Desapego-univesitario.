@@ -397,6 +397,56 @@ body.modo-noturno .lp-numero strong { color: #9ad19e; }
 .lp-numero span { display: block; margin-top: 0.3rem; font-size: 0.86rem; color: var(--lp-texto); }
 .lp-nota { margin: 1rem 0 0; font-size: 0.79rem; color: var(--lp-texto); text-align: center; }
 
+/* ---------- Vitrine ----------
+   Os cards são os .card-item do próprio app (montados pelo renderGrid do
+   site.js), então só a grade e os chips de filtro moram aqui. */
+.lp-vitrine-grade {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
+}
+@media (min-width: 700px) { .lp-vitrine-grade { grid-template-columns: repeat(4, 1fr); gap: 1.1rem; } }
+
+/* O .chip do projeto existe só dentro de um @media de até 767px (é um
+   componente da home mobile). A landing reusa a mesma aparência também no
+   desktop, pra ser o mesmo componente e não um filtro diferente. */
+.lp-page .chips { justify-content: center; margin-bottom: 1.6rem; }
+@media (min-width: 768px) {
+  .lp-page .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.8rem; }
+  .lp-page .chip {
+    padding: 0.5em 0.9em;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+}
+.lp-page .chip {
+  cursor: pointer;
+  font-family: inherit;
+  background: var(--lp-cartao);
+  border: 1.5px solid var(--lp-borda);
+  color: var(--lp-titulo);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.lp-page .chip:hover { border-color: var(--green-500); color: var(--green-700); }
+.lp-page .chip--ativo,
+.lp-page .chip--ativo:hover {
+  background: var(--green-500);
+  border-color: var(--green-500);
+  color: #fff;
+}
+/* No escuro o chip usaria a mesma cor do fundo da seção — precisa de uma
+   superfície mais clara pra não sumir (mesmo caso da esteira). */
+body.modo-noturno.lp-page .chip { background: #474747; border-color: rgba(255, 255, 255, 0.28); color: #f2f2f2; }
+body.modo-noturno.lp-page .chip:hover { border-color: #9ad19e; color: #c3e6c5; }
+body.modo-noturno.lp-page .chip--ativo,
+body.modo-noturno.lp-page .chip--ativo:hover {
+  background: rgba(154, 209, 158, 0.22);
+  border-color: #9ad19e;
+  color: #c3e6c5;
+}
+
 /* ---------- Fechamento ---------- */
 .lp-final { text-align: center; }
 .lp-final h2 { color: var(--lp-titulo); font-size: 1.6rem; margin-bottom: 0.55rem; }

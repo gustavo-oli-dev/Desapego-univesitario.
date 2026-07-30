@@ -130,7 +130,77 @@ function configurarContadores() {
   contadores.forEach((c) => observador.observe(c));
 }
 
+// --- Vitrine (amostra do catálogo + filtro por categoria) ------------------
+// Os cards são montados pelo renderGrid() do site.js — o mesmo componente do
+// catálogo — então ficam idênticos aos do app, inclusive no modo noturno.
+const QUANTIDADE_VITRINE = 4;
+
+async function configurarVitrine() {
+  const grade = document.getElementById("lp-grade");
+  const aviso = document.getElementById("lp-aviso");
+  const filtros = document.getElementById("lp-filtros");
+  if (!grade) return;
+
+  // Aqui a vitrine é apresentação, não navegação: clicar num card leva pro
+  // app em vez de abrir o anúncio (ou cair na tela de login). Fase de captura
+  // + stopPropagation: roda ANTES do clique que o site.js instala no card.
+  grade.addEventListener("click", (evento) => {
+    evento.preventDefault();
+    evento.stopPropagation();
+    window.location.href = "index.html";
+  }, true);
+
+  let categorias = [];
+  try {
+    await api.carregarOpcoes();
+    categorias = api.categorias || [];
+  } catch {
+    // sem a API fica só o "Tudo", e a grade mostra o aviso de erro
+  }
+
+  let categoriaAtiva = "todas";
+
+  async function mostrar(categoria) {
+    categoriaAtiva = categoria;
+    filtros.querySelectorAll(".chip").forEach((chip) => {
+      const ativo = chip.dataset.categoria === categoria;
+      chip.classList.toggle("chip--ativo", ativo);
+      chip.setAttribute("aria-pressed", String(ativo));
+    });
+
+    try {
+      const anuncios = await api.listarAnuncios({ categoria, limit: QUANTIDADE_VITRINE });
+      renderGrid(grade, anuncios, aviso);
+      if (!anuncios.length) {
+        aviso.textContent = categoria === "todas"
+          ? "Ainda não há itens publicados."
+          : "Nenhum item nesta categoria por enquanto.";
+      }
+    } catch {
+      grade.innerHTML = "";
+      aviso.textContent = "Não foi possível carregar os itens agora.";
+      aviso.hidden = false;
+    }
+  }
+
+  ["todas", ...categorias].forEach((categoria) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip";
+    chip.dataset.categoria = categoria;
+    chip.textContent = categoria === "todas" ? "Tudo" : categoria;
+    chip.setAttribute("aria-pressed", "false");
+    chip.addEventListener("click", () => {
+      if (categoria !== categoriaAtiva) mostrar(categoria);
+    });
+    filtros.appendChild(chip);
+  });
+
+  mostrar("todas");
+}
+
 medirAlturaDoTopo();
 configurarEntradas();
 configurarRolagem();
 configurarContadores();
+configurarVitrine();
