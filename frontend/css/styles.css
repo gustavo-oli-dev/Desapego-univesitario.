@@ -803,6 +803,49 @@ body.modo-noturno .chat-atalho__badge { box-shadow: 0 0 0 2px #363636; }
   font-weight: 700;
   color: var(--green-700);
 }
+.lista-opcoes__vazio { margin: 0; padding: 0.6em 0.8em; font-size: 0.8rem; color: var(--ink-soft); cursor: default; }
+
+/* --multi (campo de Curso do anúncio): o botão pode acumular vários nomes
+   ("Engenharia Civil, Direito, ..."), então precisa truncar em vez de
+   quebrar o layout — daí o texto ir num <span> à parte, que é quem encolhe
+   e ganha reticências (o :after do chevron continua com tamanho fixo). */
+.lista-opcoes--multi .lista-opcoes__botao-texto {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+/* Painel com um campo de busca embutido, pra filtrar os 44 cursos rápido
+   sem precisar rolar tudo. A busca fica fixa no topo (flex: none) e só a
+   lista rola dentro do espaço que sobra — sem isso, o painel (que já tem
+   overflow-y:auto pro caso single-select) rolaria junto com a busca, dando
+   duas barras de rolagem uma dentro da outra. */
+.lista-opcoes__painel--multi {
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+}
+.lista-opcoes__busca {
+  flex: none;
+  width: 100%;
+  margin-bottom: 0.35rem;
+  padding: 0.5em 0.7em;
+  border: 1.5px solid rgba(28, 69, 50, 0.16);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ink);
+  background: #fff;
+}
+.lista-opcoes__busca:focus { outline: none; border-color: var(--green-500); }
+.lista-opcoes__lista {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
 
 /* ===================================================================
    Grid de itens / cards
@@ -1864,36 +1907,15 @@ body.pagina-cadastro .form-rodape a { color: #3b5bdb; }
   border: 1.5px dashed rgba(28,69,50,0.18);
 }
 
-/* Campo de busca + checklist (Curso/Matéria/Autor): digita pra filtrar
-   uma lista fixa de valores já cadastrados e marca com checkbox os que
-   servem. Não cria valor novo por aqui. */
+/* Campo de escolha de Curso do anúncio: mesmo componente .lista-opcoes do
+   filtro de Curso (catálogo) e do campo de Curso do perfil — mesma borda,
+   sombra e cor de seleção verde. A diferença é só o modificador --multi
+   (mais de um curso marcado por vez) e a busca dentro do painel, já que
+   aqui não tem um "chip" mostrando cada valor escolhido: o próprio botão
+   lista os nomes marcados. As classes específicas ficam logo abaixo, junto
+   das regras extras do .lista-opcoes (ver "Lista de opções própria"). */
 .campo-multiescolha { display: flex; flex-direction: column; gap: 0.35rem; }
 .campo-multiescolha__label { font-size: 0.85rem; font-weight: 600; color: var(--ink); }
-
-.cm-opcoes {
-  display: flex;
-  flex-direction: column;
-  max-height: 140px;
-  overflow-y: auto;
-  border: 1.5px solid rgba(28,69,50,0.18);
-  border-radius: 10px;
-  background: #fff;
-}
-.cm-opcoes:empty { display: none; border: none; }
-
-.cm-opcao {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-  padding: 0.5em 0.8em;
-  font-size: 0.85rem;
-  font-weight: 400;
-  cursor: pointer;
-}
-.cm-opcao:hover { background: var(--accent-100); }
-.cm-opcao input { width: auto; }
-
-.cm-vazio { margin: 0; padding: 0.6em 0.8em; font-size: 0.8rem; color: var(--ink-soft); }
 
 .tipo-anuncio {
   border: none;
@@ -2059,14 +2081,6 @@ body.modo-noturno .campos-extra {
 body.modo-noturno .campo-multiescolha__label,
 body.modo-noturno .tipo-anuncio legend { color: #d8dbd9; }
 body.modo-noturno .checkbox-linha { color: #a7ada9 !important; }
-/* lista que abre ao digitar em Curso/Matéria/Autor (era branca, hover rosa) */
-body.modo-noturno .cm-opcoes {
-  background: #2a2a2a;
-  border-color: rgba(255, 255, 255, 0.16);
-}
-body.modo-noturno .cm-opcao { color: #d8dbd9; }
-body.modo-noturno .cm-opcao:hover { background: rgba(154, 209, 158, 0.14); }
-body.modo-noturno .cm-vazio { color: #a7ada9; }
 
 /* Chat: a página inteira não tinha modo noturno — ficava um bloco branco
    no meio do tema escuro. */
@@ -2168,6 +2182,13 @@ body.modo-noturno .lista-opcoes__item[aria-selected="true"] {
   color: #9ad19e;
 }
 body.modo-noturno .lista-opcoes__botao { color: #f2f2f2; }
+body.modo-noturno .lista-opcoes__vazio { color: #a7ada9; }
+body.modo-noturno .lista-opcoes__busca {
+  background: #363636;
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #f2f2f2;
+}
+body.modo-noturno .lista-opcoes__busca:focus { border-color: #9ad19e; }
 
 /* Área de filtros do catálogo: os cartões continuavam brancos no modo
    noturno. Sem isto o texto claro do Curso ficava branco sobre branco. */

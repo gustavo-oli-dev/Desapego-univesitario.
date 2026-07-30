@@ -1,7 +1,7 @@
 /**
  * Página Anunciar: preenche a categoria, alterna o campo de preço
- * conforme doação/venda, controla os campos extras de Livros (busca +
- * checklist de Curso/Matéria/Autor) e publica o anúncio via api.criarAnuncio.
+ * conforme doação/venda, controla o campo extra de Livros (o multi-seleção
+ * de Curso) e publica o anúncio via api.criarAnuncio.
  *
  * Também serve pra EDITAR: se a URL tiver ?editar=<id>, a página carrega
  * os dados desse anúncio, preenche o formulário e troca o envio pra
@@ -21,59 +21,90 @@ function sincronizarVisibilidadeCamposLivro() {
   camposLivro.hidden = select.value !== "Livros";
 }
 
-// Monta o campo de busca + checklist: digitar filtra (com tolerância a
-// erro de digitação) dentro de uma lista fixa de valores já cadastrados
-// (curso/matéria/autor) e cada um pode ser marcado por checkbox. Não dá
-// pra criar um valor novo por aqui — essas listas quem define é o admin.
+// Mesmo componente <details> do filtro de Curso (catalogo.js), adaptado pra
+// multi-seleção: cada clique marca/desmarca um item, sem fechar o painel —
+// dá pra marcar vários cursos seguidos. O botão mostra os valores marcados
+// (com "..." se não couber), igual ao filtro mostra o valor escolhido.
 function configurarCampoMultiEscolha(campo, valoresPermitidos) {
   const wrapper = document.querySelector(`.campo-multiescolha[data-campo="${campo}"]`);
-  const busca = wrapper.querySelector(".cm-busca");
-  const opcoesEl = wrapper.querySelector(".cm-opcoes");
+  const dropdown = wrapper.querySelector(".lista-opcoes");
+  const botaoTexto = wrapper.querySelector(".lista-opcoes__botao-texto");
+  const busca = wrapper.querySelector(".lista-opcoes__busca");
+  const lista = wrapper.querySelector(".lista-opcoes__lista");
   const selecionados = new Set();
 
-  function criarOpcao(valor) {
-    const label = document.createElement("label");
-    label.className = "cm-opcao";
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = selecionados.has(valor);
-    checkbox.addEventListener("change", () => {
-      if (checkbox.checked) selecionados.add(valor);
-      else selecionados.delete(valor);
-    });
-
-    label.appendChild(checkbox);
-    label.append(valor);
-    return label;
+  function atualizarBotao() {
+    const texto = [...selecionados].join(", ");
+    botaoTexto.textContent = texto || "Selecionar...";
+    // title dá o texto completo no hover, já que o botão trunca com "..."
+    dropdown.querySelector(".lista-opcoes__botao").title = texto;
   }
 
-  function renderOpcoes() {
-    const query = busca.value.trim();
-    opcoesEl.innerHTML = "";
-    if (!query) return; // só lista as opções depois que a pessoa começar a buscar
+  function criarItem(valor) {
+    const item = document.createElement("li");
+    item.className = "lista-opcoes__item";
+    item.setAttribute("role", "option");
+    item.textContent = valor;
+    item.setAttribute("aria-selected", String(selecionados.has(valor)));
+    item.addEventListener("click", () => {
+      if (selecionados.has(valor)) selecionados.delete(valor);
+      else selecionados.add(valor);
+      item.setAttribute("aria-selected", String(selecionados.has(valor)));
+      atualizarBotao();
+    });
+    return item;
+  }
 
-    const encontrados = valoresPermitidos.filter((valor) => textoCombina(query, valor));
-    if (encontrados.length === 0) {
-      opcoesEl.innerHTML = '<p class="cm-vazio">Nenhum resultado.</p>';
+  function renderLista() {
+    const termo = busca.value.trim();
+    const filtrados = termo
+      ? valoresPermitidos.filter((valor) => textoCombina(termo, valor))
+      : valoresPermitidos;
+
+    lista.innerHTML = "";
+    if (filtrados.length === 0) {
+      lista.innerHTML = '<li class="lista-opcoes__vazio">Nenhum resultado.</li>';
       return;
     }
-    encontrados.forEach((valor) => opcoesEl.appendChild(criarOpcao(valor)));
+    filtrados.forEach((valor) => lista.appendChild(criarItem(valor)));
   }
 
-  busca.addEventListener("input", renderOpcoes);
-  renderOpcoes();
+  busca.addEventListener("input", renderLista);
+
+  // Abrir sempre começa do zero: limpa a busca e foca, pra digitar na hora.
+  dropdown.addEventListener("toggle", () => {
+    if (dropdown.open) {
+      busca.value = "";
+      renderLista();
+      busca.focus();
+    }
+  });
+
+  // Diferente do filtro (single-select), aqui marcar um item NÃO fecha o
+  // painel — só clicar fora ou apertar Esc fecha, pra dar pra marcar vários
+  // cursos seguidos sem reabrir toda vez.
+  document.addEventListener("click", (event) => {
+    if (!dropdown.contains(event.target)) dropdown.open = false;
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") dropdown.open = false;
+  });
+
+  renderLista();
+  atualizarBotao();
 
   return {
     getSelecionados: () => [...selecionados],
     setSelecionados: (valores) => {
       selecionados.clear();
       valores.forEach((v) => selecionados.add(v));
+      atualizarBotao();
+      renderLista();
     },
     reset: () => {
       selecionados.clear();
-      busca.value = "";
-      renderOpcoes();
+      atualizarBotao();
+      renderLista();
     },
   };
 }
@@ -87,6 +118,17 @@ function configurarCamposLivro() {
   sincronizarVisibilidadeCamposLivro();
 
   return camposMultiLivro;
+}
+
+// Trava o campo de Curso (edição de anúncio já publicado, ou modo oferta —
+// nos dois casos as tags de livro ficam bloqueadas). Mesmo padrão do Curso
+// do perfil: fecha o <details> e bloqueia por CSS (--bloqueada), em vez de
+// tentar desabilitar um <input> — aqui o campo é um <details>, não um input.
+function bloquearCursoAnuncio() {
+  const dropdown = document.getElementById("curso-anuncio-dropdown");
+  if (!dropdown) return;
+  dropdown.classList.add("lista-opcoes--bloqueada");
+  dropdown.open = false;
 }
 
 const MAX_FOTOS = 5;
@@ -245,7 +287,7 @@ async function preencherParaEdicao(id, camposMultiLivro) {
   form.categoria.disabled = true;
   form.querySelectorAll('input[name="tipo"]').forEach((r) => (r.disabled = true));
   form.telefonePublico.disabled = true;
-  document.querySelectorAll(".cm-busca").forEach((campo) => (campo.disabled = true));
+  bloquearCursoAnuncio();
 
   return anuncio;
 }
@@ -285,7 +327,7 @@ function ativarModoOferta(precoAtual) {
   [...form.elements].forEach((campo) => {
     if (campo.name !== "preco") campo.disabled = true;
   });
-  document.querySelectorAll(".cm-busca").forEach((campo) => (campo.disabled = true));
+  bloquearCursoAnuncio();
 
   document.querySelector(".page-header h1").textContent = "Fazer oferta";
   document.querySelector(".page-header p").textContent =

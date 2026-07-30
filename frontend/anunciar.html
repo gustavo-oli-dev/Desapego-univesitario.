@@ -11,7 +11,7 @@
   <link rel="icon" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
 
-  <link rel="stylesheet" href="css/styles.css?v=94" />
+  <link rel="stylesheet" href="css/styles.css?v=95" />
 </head>
 <body>
 
@@ -67,8 +67,20 @@
           <div id="campos-livro" class="campos-extra" hidden>
             <div class="campo-multiescolha" data-campo="curso">
               <span class="campo-multiescolha__label">Curso</span>
-              <input type="text" class="cm-busca" placeholder="Buscar ou adicionar um curso..." />
-              <div class="cm-opcoes"></div>
+              <!-- Mesmo componente do filtro de Curso do catálogo (<details> com
+                   altura limitada e scroll), adaptado pra multi-seleção: cada
+                   item marcado fica destacado em verde, igual ao item ativo do
+                   filtro — só que aqui pode marcar mais de um. -->
+              <details class="lista-opcoes lista-opcoes--campo lista-opcoes--multi" id="curso-anuncio-dropdown">
+                <summary class="lista-opcoes__botao" id="curso-anuncio-botao">
+                  <span class="lista-opcoes__botao-texto">Selecionar...</span>
+                </summary>
+                <div class="lista-opcoes__painel lista-opcoes__painel--multi">
+                  <input type="search" class="lista-opcoes__busca" id="curso-anuncio-busca"
+                         placeholder="Buscar curso..." autocomplete="off" aria-label="Buscar curso" />
+                  <ul class="lista-opcoes__lista" id="curso-anuncio-lista" aria-label="Curso" aria-multiselectable="true"></ul>
+                </div>
+              </details>
             </div>
           </div>
 
@@ -118,11 +130,11 @@
     </section>
   </main>
 
-<script src="js/config.js?v=94"></script>
+<script src="js/config.js?v=95"></script>
 
-<script src="js/auth.js?v=94"></script>
-  <script src="js/api.js?v=94"></script>
-  <script src="js/site.js?v=94"></script>
-  <script src="js/anunciar.js?v=94"></script>
+<script src="js/auth.js?v=95"></script>
+  <script src="js/api.js?v=95"></script>
+  <script src="js/site.js?v=95"></script>
+  <script src="js/anunciar.js?v=95"></script>
 </body>
 </html>
