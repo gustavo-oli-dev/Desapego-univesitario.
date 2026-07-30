@@ -17,7 +17,10 @@ import requests
 from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+import pillow_heif
 from PIL import Image, ImageOps
+
+pillow_heif.register_heif_opener()   # permite o Pillow abrir .heic/.heif (formato padrão de foto do iPhone)
 
 import database
 import email_service
@@ -68,7 +71,7 @@ DIR_ANUNCIOS = DIR_ESTATICO / "uploads" / "anuncios"
 DIR_AVATARS.mkdir(parents=True, exist_ok=True)
 DIR_CHAT.mkdir(parents=True, exist_ok=True)
 DIR_ANUNCIOS.mkdir(parents=True, exist_ok=True)
-EXTENSOES_IMAGEM_PERMITIDAS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
+EXTENSOES_IMAGEM_PERMITIDAS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".heic", ".heif"}
 # 10MB é o limite do UPLOAD (antes de comprimir): celular moderno em qualidade
 # máxima passa dos 5MB com facilidade, e o que fica salvo é bem menor de todo
 # jeito, porque tudo é recomprimido logo abaixo.
@@ -135,6 +138,8 @@ async def salvar_imagem_upload(arquivo: UploadFile, diretorio: Path, url_base: s
 
     try:
         conteudo = comprimir_imagem(conteudo)
+    except HTTPException:
+        raise  # motivo específico (ex.: resolução acima do teto) — não mascarar
     except Exception:
         # Extensão de imagem mas conteúdo que o Pillow não abre = arquivo inválido.
         raise HTTPException(status_code=422, detail="Não foi possível processar a imagem")

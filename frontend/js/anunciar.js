@@ -363,7 +363,7 @@ function configurarFormulario(camposMultiLivro, idEditando, emOferta, precoAtual
         await api.enviarOferta(idEditando, precoNovo);
         window.location.href = "meus-anuncios.html";
       } catch (err) {
-        feedback.textContent = "Não foi possível enviar a oferta agora. Tente novamente.";
+        feedback.textContent = err.message || "Não foi possível enviar a oferta agora. Tente novamente.";
         feedback.classList.add("is-error");
         btn.disabled = false;
         btnLabel.hidden = false;
@@ -398,7 +398,7 @@ function configurarFormulario(camposMultiLivro, idEditando, emOferta, precoAtual
         window.location.href = "meus-anuncios.html";
         return;
       } catch (err) {
-        feedback.textContent = "Não foi possível salvar agora. Tente novamente.";
+        feedback.textContent = err.message || "Não foi possível salvar agora. Tente novamente.";
         feedback.classList.add("is-error");
       } finally {
         btn.disabled = false;
@@ -437,7 +437,7 @@ function configurarFormulario(camposMultiLivro, idEditando, emOferta, precoAtual
       await api.criarAnuncio(dados);
       window.location.href = "meus-anuncios.html";
     } catch (err) {
-      feedback.textContent = "Não foi possível salvar agora. Tente novamente.";
+      feedback.textContent = err.message || "Não foi possível salvar agora. Tente novamente.";
       feedback.classList.add("is-error");
     } finally {
       btn.disabled = false;

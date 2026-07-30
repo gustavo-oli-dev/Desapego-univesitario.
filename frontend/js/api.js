@@ -26,7 +26,14 @@ function headersComToken() {
 async function tratarResposta(response) {
   if (!response.ok) {
     const corpo = await response.json().catch(() => ({}));
-    throw new Error(corpo.detail ? JSON.stringify(corpo.detail) : `Erro ${response.status}`);
+    // corpo.detail geralmente já é a mensagem pronta pro usuário (ex.: "Imagem
+    // muito grande (12.3MB)..."). Só usa JSON.stringify se vier em outro
+    // formato (lista de erros de validação do FastAPI, por exemplo).
+    const mensagem =
+      typeof corpo.detail === "string" ? corpo.detail
+      : corpo.detail ? JSON.stringify(corpo.detail)
+      : `Erro ${response.status}`;
+    throw new Error(mensagem);
   }
   if (response.status === 204) return null;
   return response.json();
