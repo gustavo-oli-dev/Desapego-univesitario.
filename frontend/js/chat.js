@@ -22,11 +22,7 @@ function termoConfirmacao() {
 }
 
 function renderAvatarChat(elemento, foto, nome) {
-  if (foto) {
-    elemento.innerHTML = `<img src="${resolverUrlFoto(foto)}" alt="" />`;
-  } else {
-    elemento.textContent = (nome || "?")[0].toUpperCase();
-  }
+  preencherAvatar(elemento, foto, nome);
 }
 
 function renderListaConversas(conversas) {

@@ -124,7 +124,16 @@ def obter_usuario_atual(authorization: Optional[str] = Header(None)) -> int:
     conn = database.conectar()
     linha = conn.execute("SELECT banido FROM usuarios WHERE id = ?", (usuario_id,)).fetchone()
     conn.close()
-    if linha and linha["banido"]:
+
+    # O token pode ser válido e mesmo assim o usuário não existir mais: conta
+    # removida, ou o banco recriado do zero (é o caso do disco efêmero do
+    # plano free, que zera a cada deploy). Sem esta checagem o id seguia
+    # adiante e as rotas quebravam com 500 ao ler um registro inexistente —
+    # em vez de 401, que é o que faz o frontend mandar pro login.
+    if not linha:
+        raise HTTPException(status_code=401, detail="Sessão inválida ou expirada, faça login novamente")
+
+    if linha["banido"]:
         raise HTTPException(status_code=403, detail="Sua conta foi banida da plataforma")
 
     return usuario_id

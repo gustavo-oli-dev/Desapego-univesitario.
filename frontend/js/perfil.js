@@ -14,12 +14,9 @@ let fotoAtual = "";
 let arquivoFotoSelecionado = null;
 
 function renderAvatarPerfil(foto, nome) {
-  const avatar = document.getElementById("perfil-foto-avatar");
-  if (foto) {
-    avatar.innerHTML = `<img src="${resolverUrlFoto(foto)}" alt="" />`;
-  } else {
-    avatar.textContent = (nome || "?")[0].toUpperCase();
-  }
+  // preencherAvatar (site.js) cuida do caso da foto não carregar, caindo na
+  // inicial em vez de deixar o ícone de imagem quebrada.
+  preencherAvatar(document.getElementById("perfil-foto-avatar"), foto, nome);
 }
 
 function preencherSelect(select, opcoes, valorAtual) {

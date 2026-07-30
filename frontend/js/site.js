@@ -30,6 +30,25 @@ function resolverUrlFoto(foto) {
   return `${API_URL}${foto}`;
 }
 
+// Preenche um avatar: a foto quando existe, senão a inicial do nome.
+// O onerror importa: o arquivo pode ter sumido do servidor (no plano free o
+// disco é zerado a cada deploy) e o <img> viraria um ícone de imagem
+// quebrada. Nesse caso caímos na inicial, que é o mesmo visual de quem
+// nunca enviou foto.
+function preencherAvatar(elemento, foto, nome) {
+  const inicial = ((nome || "?").trim()[0] || "?").toUpperCase();
+  if (!foto) {
+    elemento.textContent = inicial;
+    return;
+  }
+  const img = document.createElement("img");
+  img.alt = "";
+  img.addEventListener("error", () => { elemento.textContent = inicial; });
+  img.src = resolverUrlFoto(foto);
+  elemento.textContent = "";
+  elemento.appendChild(img);
+}
+
 const ICONE_POR_CATEGORIA = {
   "Livros": "📚",
   "Eletrônicos": "💻",
@@ -287,14 +306,12 @@ function renderPerfilTopo() {
   }
 
   const primeiroNome = usuario.nome.split(" ")[0];
-  const avatar = usuario.foto
-    ? `<img src="${resolverUrlFoto(usuario.foto)}" alt="" />`
-    : primeiroNome[0].toUpperCase();
   area.innerHTML = `
-    <span class="perfil-topo__avatar">${avatar}</span>
+    <span class="perfil-topo__avatar"></span>
     <span class="perfil-topo__nome">${primeiroNome}</span>
     <button type="button" class="perfil-topo__sair" id="btn-sair">Sair</button>
   `;
+  preencherAvatar(area.querySelector(".perfil-topo__avatar"), usuario.foto, primeiroNome);
   document.getElementById("btn-sair").addEventListener("click", (event) => {
     event.stopPropagation();
     sair();

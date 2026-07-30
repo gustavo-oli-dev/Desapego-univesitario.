@@ -4,12 +4,7 @@
  */
 
 function renderAvatarPublico(foto, nome) {
-  const avatar = document.getElementById("pp-avatar");
-  if (foto) {
-    avatar.innerHTML = `<img src="${resolverUrlFoto(foto)}" alt="" />`;
-  } else {
-    avatar.textContent = (nome || "?")[0].toUpperCase();
-  }
+  preencherAvatar(document.getElementById("pp-avatar"), foto, nome);
 }
 
 // Cada clique numa aba busca da API já filtrado (?usuario=&vendido=) em
