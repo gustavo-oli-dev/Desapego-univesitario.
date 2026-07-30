@@ -151,7 +151,9 @@ body.modo-noturno.lp-page .topbar.is-preso .brand { color: #f2f2f2; }
      A altura vem medida pelo JS (--lp-topo-altura) em vez de um número
      fixo: assim mudar o espaçamento da barra não descola o hero. */
   margin-top: calc(var(--lp-topo-altura, 52px) * -1);
-  padding: 7rem 0 3.5rem;
+  /* O padding de baixo é generoso no celular de propósito: é o espaço que
+     deixa a placa da mesa aparecer sob o texto, em vez de ficar encoberta. */
+  padding: 6.5rem 0 9rem;
   overflow: hidden;
   background: var(--lp-madeira-escura);
   color: #f6ede0;
@@ -175,27 +177,38 @@ body.modo-noturno.lp-page .topbar.is-preso .brand { color: #f2f2f2; }
     background-position: 40% 26%;
   }
 }
-/* Véu escuro do lado do texto; no celular vira vertical. */
+/* Véu em duas camadas.
+   A de cima escurece a faixa onde o cabeçalho transparente passa: a cabeça do
+   mascote fica a 4% do topo da ilustração, então sem isso a barra "come" ela.
+   A de baixo é o véu do lado do texto.
+   No celular a ilustração aparece INTEIRA (não há corte vertical nessa
+   proporção), e a placa da mesa fica na base — por isso o véu escurece o topo,
+   onde está o texto, e clareia embaixo, onde está a placa. */
 .lp-hero__veu {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(53, 27, 25, 0.62) 0%,
-    rgba(53, 27, 25, 0.86) 55%,
-    rgba(53, 27, 25, 0.95) 100%
-  );
+  background:
+    linear-gradient(to bottom, rgba(43, 21, 19, 0.8) 0, rgba(43, 21, 19, 0) 96px),
+    linear-gradient(
+      to bottom,
+      rgba(53, 27, 25, 0.9) 0%,
+      rgba(53, 27, 25, 0.86) 46%,
+      rgba(53, 27, 25, 0.5) 80%,
+      rgba(53, 27, 25, 0.28) 100%
+    );
 }
 @media (min-width: 900px) {
   .lp-hero__veu {
-    background: linear-gradient(
-      100deg,
-      rgba(43, 21, 19, 0.96) 0%,
-      rgba(43, 21, 19, 0.9) 34%,
-      rgba(43, 21, 19, 0.55) 55%,
-      rgba(43, 21, 19, 0.18) 72%,
-      rgba(43, 21, 19, 0.35) 100%
-    );
+    background:
+      linear-gradient(to bottom, rgba(43, 21, 19, 0.82) 0, rgba(43, 21, 19, 0) 110px),
+      linear-gradient(
+        100deg,
+        rgba(43, 21, 19, 0.96) 0%,
+        rgba(43, 21, 19, 0.9) 34%,
+        rgba(43, 21, 19, 0.55) 55%,
+        rgba(43, 21, 19, 0.18) 72%,
+        rgba(43, 21, 19, 0.35) 100%
+      );
   }
 }
 /* Diferente das outras seções, o hero não centraliza o conteúdo numa
