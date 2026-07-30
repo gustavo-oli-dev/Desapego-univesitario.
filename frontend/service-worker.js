@@ -5,7 +5,7 @@
  * só o "esqueleto" da interface (HTML/CSS/JS/imagens) funciona offline.
  */
 
-const CACHE_NAME = "desapego-shell-v276";
+const CACHE_NAME = "desapego-shell-v277";
 
 const APP_SHELL = [
   "./",
@@ -97,5 +97,13 @@ function networkFirst(request) {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  // A API mora em outra origem (Render, enquanto o site é Netlify) — sem
+  // esse filtro, uma chamada de API que falhasse por rede caía no mesmo
+  // fallback do app shell e voltava com o HTML de "./index.html" no lugar
+  // de JSON (ou pior: um JSON antigo em cache, sem avisar que tá velho).
+  // No mobile, com rede mais instável (troca de wifi pra dados, túnel,
+  // elevador), isso fazia anúncios de verdade "sumirem" da tela sem
+  // nenhum erro — não é cache que resolve, é a API respondendo de novo.
+  if (new URL(event.request.url).origin !== self.location.origin) return;
   event.respondWith(networkFirst(event.request));
 });

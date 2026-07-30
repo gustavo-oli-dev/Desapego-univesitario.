@@ -22,13 +22,26 @@ async function removerAnuncioOtimista(id, cardElemento) {
 async function carregarPagina({ anexar }) {
   const grid = document.getElementById("grid-meus");
   const empty = document.getElementById("meus-empty");
+  const emptyTexto = document.getElementById("meus-empty-texto");
   const btnCarregarMais = document.getElementById("btn-carregar-mais");
 
-  const anuncios = await api.listarMeusAnuncios({
-    vendido: abaAtual === "vendidos",
-    limit: ITENS_POR_PAGINA,
-    offset: offsetAtual,
-  });
+  let anuncios;
+  try {
+    anuncios = await api.listarMeusAnuncios({
+      vendido: abaAtual === "vendidos",
+      limit: ITENS_POR_PAGINA,
+      offset: offsetAtual,
+    });
+  } catch (err) {
+    // Não confundir "sem internet agora" com "você não tem anúncios" — a
+    // segunda mensagem faria parecer que os anúncios sumiram de verdade.
+    grid.innerHTML = "";
+    empty.hidden = false;
+    emptyTexto.textContent = "Não foi possível carregar seus anúncios agora. Verifique sua internet e tente de novo.";
+    document.getElementById("meus-empty-cta").hidden = true;
+    btnCarregarMais.hidden = true;
+    return;
+  }
 
   renderGrid(grid, anuncios, empty, {
     anexar,
