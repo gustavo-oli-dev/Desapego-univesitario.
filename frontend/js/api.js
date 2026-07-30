@@ -36,19 +36,15 @@ const api = {
   categorias: [],
   cursos: [],
   turnos: [],
-  materias: [],
-  autores: [],
   motivosDenuncia: [],
 
-  // Busca as listas fixas (categorias, cursos, matérias, autores) do
-  // backend. Precisa rodar antes de qualquer tela que use essas listas.
+  // Busca as listas fixas (categorias, cursos, turnos) do backend. Precisa
+  // rodar antes de qualquer tela que use essas listas.
   async carregarOpcoes() {
     const opcoes = await fetch(`${API_URL}/opcoes`).then(tratarResposta);
     api.categorias = opcoes.categorias;
     api.cursos = opcoes.cursos;
     api.turnos = opcoes.turnos;
-    api.materias = opcoes.materias;
-    api.autores = opcoes.autores;
     api.motivosDenuncia = opcoes.motivos_denuncia;
   },
 
@@ -167,10 +163,6 @@ const api = {
     const token = obterToken();
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return fetch(`${API_URL}/anuncios?${params}`, { headers }).then(tratarResposta);
-  },
-
-  async listarFiltrosAnuncios(categoria) {
-    return fetch(`${API_URL}/anuncios/filtros?categoria=${encodeURIComponent(categoria)}`).then(tratarResposta);
   },
 
   async bloquearUsuario(id) {
@@ -305,8 +297,6 @@ const api = {
     formData.append("tipo", dados.tipo);
     if (dados.preco) formData.append("preco", dados.preco);
     dados.curso.forEach((v) => formData.append("curso", v));
-    dados.materia.forEach((v) => formData.append("materia", v));
-    dados.autor.forEach((v) => formData.append("autor", v));
     formData.append("telefone_publico", dados.telefonePublico);
     dados.fotos.forEach((arquivo) => formData.append("fotos", arquivo));
 

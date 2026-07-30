@@ -707,34 +707,6 @@ def listar_anuncios(
     return [linha_para_anuncio(l) for l in linhas]
 
 
-@app.get("/anuncios/filtros")
-def listar_filtros_anuncios(categoria: str):
-    """Valores únicos de curso/matéria/autor disponíveis numa categoria —
-    usado pra popular os subfiltros de Livros no catálogo sem precisar
-    baixar o catálogo inteiro só pra descobrir quais opções existem.
-    curso/materia/autor são arrays serializados em JSON (um livro pode
-    valer pra mais de um curso), então "achatar" e deduplicar é feito em
-    Python — mais simples e portável do que depender de json_each() do
-    SQLite."""
-    conn = database.conectar()
-    linhas = conn.execute(
-        "SELECT curso, materia, autor FROM anuncios WHERE categoria = ?", (categoria,)
-    ).fetchall()
-    conn.close()
-
-    cursos, materias, autores = set(), set(), set()
-    for linha in linhas:
-        cursos.update(json.loads(linha["curso"] or "[]"))
-        materias.update(json.loads(linha["materia"] or "[]"))
-        autores.update(json.loads(linha["autor"] or "[]"))
-
-    return {
-        "curso": sorted(cursos),
-        "materia": sorted(materias),
-        "autor": sorted(autores),
-    }
-
-
 @app.get("/anuncios/meus")
 def listar_meus_anuncios(
     vendido: Optional[bool] = None,

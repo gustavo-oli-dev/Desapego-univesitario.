@@ -81,8 +81,6 @@ function configurarCampoMultiEscolha(campo, valoresPermitidos) {
 function configurarCamposLivro() {
   const camposMultiLivro = {
     curso: configurarCampoMultiEscolha("curso", api.cursos),
-    materia: configurarCampoMultiEscolha("materia", api.materias),
-    autor: configurarCampoMultiEscolha("autor", api.autores),
   };
 
   document.getElementById("f-categoria").addEventListener("change", sincronizarVisibilidadeCamposLivro);
@@ -235,8 +233,6 @@ async function preencherParaEdicao(id, camposMultiLivro) {
 
   if (anuncio.categoria === "Livros") {
     camposMultiLivro.curso.setSelecionados(anuncio.curso || []);
-    camposMultiLivro.materia.setSelecionados(anuncio.materia || []);
-    camposMultiLivro.autor.setSelecionados(anuncio.autor || []);
   }
 
   document.querySelector(".page-header h1").textContent = "Editar item";
@@ -379,14 +375,10 @@ function configurarFormulario(camposMultiLivro, idEditando, emOferta, precoAtual
       fotos: fotosNovas,
       telefonePublico: form.telefonePublico.checked,
       curso: [],
-      materia: [],
-      autor: [],
     };
 
     if (dados.categoria === "Livros") {
       dados.curso = camposMultiLivro.curso.getSelecionados();
-      dados.materia = camposMultiLivro.materia.getSelecionados();
-      dados.autor = camposMultiLivro.autor.getSelecionados();
     }
 
     if (!dados.titulo || !dados.descricao || (dados.tipo === "venda" && !dados.preco)) {
