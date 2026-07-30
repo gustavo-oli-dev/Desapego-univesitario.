@@ -169,8 +169,16 @@ async function configurarVitrine() {
     });
 
     try {
-      const anuncios = await api.listarAnuncios({ categoria, limit: QUANTIDADE_VITRINE });
-      renderGrid(grade, anuncios, aviso);
+      // Pede mais do que vai mostrar pra poder escolher: aqui a vitrine é
+      // peça de apresentação, então anúncio COM foto vem primeiro. Os sem
+      // foto entram só pra completar, se não houver com foto suficiente —
+      // assim a grade nunca fica vazia.
+      const anuncios = await api.listarAnuncios({ categoria, limit: 20 });
+      const comFoto = anuncios.filter((a) => a.imagem);
+      const semFoto = anuncios.filter((a) => !a.imagem);
+      const escolhidos = [...comFoto, ...semFoto].slice(0, QUANTIDADE_VITRINE);
+
+      renderGrid(grade, escolhidos, aviso);
       if (!anuncios.length) {
         aviso.textContent = categoria === "todas"
           ? "Ainda não há itens publicados."
