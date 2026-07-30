@@ -1133,7 +1133,7 @@ body.modo-noturno .chat-atalho__badge { box-shadow: 0 0 0 2px #363636; }
    sidebar já tem esse link, então some pra não duplicar. */
 .perfil-atalhos-mobile { display: none; }
 @media (max-width: 767px) {
-  .perfil-atalhos-mobile { display: flex; justify-content: center; gap: 0.6rem; margin-bottom: 1rem; }
+  .perfil-atalhos-mobile { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-bottom: 1rem; }
 }
 
 /* Perfil: dados/senha numa coluna à esquerda (largura fixa, tipo OLX),
