@@ -175,10 +175,10 @@ mas estar semanticamente errado — só a verificação visual, item por item, p
 
 ### Aplicação no ar
 
-- **Site (landing + app):** https://desapego-univesitario.netlify.app
+- **Site (landing + app):** [desapego-univesitario.netlify.app](https://desapego-univesitario.netlify.app)
   - a raiz mostra a landing de apresentação; o app fica em
     [`/index.html`](https://desapego-univesitario.netlify.app/index.html)
-- **API:** https://desapego-universitario-api-gustavo.onrender.com
+- **API:** [desapego-universitario-api-gustavo.onrender.com](https://desapego-universitario-api-gustavo.onrender.com)
   - exemplos: [`/opcoes`](https://desapego-universitario-api-gustavo.onrender.com/opcoes) ·
     [`/anuncios`](https://desapego-universitario-api-gustavo.onrender.com/anuncios)
 
