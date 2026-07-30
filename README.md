@@ -73,16 +73,20 @@ dos 15 dias de desafio, usadas como parceiras de arquitetura, debug e revisão �
 geradoras de código não supervisionado.
 
 ### Ferramentas utilizadas
-- **Claude Code** (modelos da família Claude — principalmente Sonnet 5, com trechos de
-  auditoria/revisão em outros modelos Claude): ferramenta principal de desenvolvimento,
+- **Claude Code** (modelos da família Claude) — principalmente Sonnet 5, majoritarimante para a
+  criação do protótipo do projeto. Opus 4.8, foi usado para tarefas mais complexas, como chat,
+  auditoria e ideias de upgrades nos serviços. Foi a ferramenta principal de desenvolvimento,
   usada dentro do VS Code para escrever, revisar e depurar o código do backend e do
-  frontend ao longo de todo o projeto.
+  frontend ao longo de todo o projeto. Falble, foi usado na ultima auditoria na questão de
+  cibersegurança.
+  
 - **Google Gemini (Pro):** usado para uma leitura inicial detalhada do PDF do edital (pra
   não deixar nenhum requisito passar despercebido) e, mais adiante, como "auxiliador"
   para analisar o que já tinha sido feito a cada etapa e sugerir pontos de melhoria e
-  possíveis causas de bugs.
-- **ChatGPT:** usado pontualmente para uma segunda opinião em um bug específico de CSS
-  (ver Reflexão Crítica).
+  possíveis causas de bugs. Usado recorrentemente para uma segunda opinião em um bug específico de CSS
+  (ver Reflexão Crítica) e análise do que ja tinha sido feito e como poderia melhorar
+
+- **Nano Banana:** Usado na criação do Hero e no suporte nas questões de paletas de cores no frontend
 
 ### Estratégia de Engenharia de Prompts
 
@@ -108,20 +112,32 @@ antes de qualquer entrega:
 > "GRAVE ISSO NA MEMÓRIA, ANTES DE ME ENTREGAR UM POSSÍVEL RESULTADO, VERIFIQUE A
 > SINTAXE DO CÓDIGO E ERROS DE LÓGICA."
 
-Detalhamento de como eu queria o filtro do catálogo — em bom português, pedi busca
+Detalhamento de como eu queria de um filtro espécifico do catálogo — em bom português, pedi busca
 tolerante a erro de digitação (`lirvo` deveria ser entendida como `livro`) e, dentro da
 categoria Livros, subfiltros específicos por curso, matéria e autor. O prompt original,
 como foi escrito, é bem mais corrido do que essa explicação — mas foi exatamente esse
 "pensar em voz alta" que ajudou a IA a não deixar nenhum desses filtros de fora:
 
-> "O filtro deve ser usado, tb deve ter uma barra de procura baseado nas letras mais
-> compativeis, ex, lirvo, e sub entendido que e um livro, o filtro deve ser usado para
-> procurar coisas, ent deve ter sim, inclusive, livros que e uma coisa mais especifico,
-> quando selecionado deve ter mais de um filtor, ex; livro de modelagem, um filtro de
+> "O filtro deve ser usável, tb deve ter uma barra de procura baseado nas letras mais
+> compativeis, ex: lirvo, e sub entendido que é um livro, o filtro deve ser usado para
+> procurar coisas especificas, inclusive, livros que e uma coisa mais especifico,
+> quando selecionado deve ter mais de um filtro, ex; livro de modelagem, um filtro de
 > curso? um filtro de materia? um filtro de autor?? essas coisas devem ser levadas em
 > consideracao."
 
-Já na reta final, pedi uma auditoria completa de segurança, deixando explícito que era só
+A maioria dos bugs encontrados foram no CSS, que foram rapidamente resolvidos através de uma 
+auditoria do Claude com o modelo Opus 4.8.
+
+Prompt de separação por tenant: Verifique o banco de dados, se está funcionando de maneira ao 
+qual foi pedida e em seguida GRAVE ISSO EM SUA MEMÓRIA: Os dados de cada usuários devem ser separados 
+tenant id, NÃO DEVEM COLIDIR DADOS, OU QUALQUER DADOS SE TRANSFOMAREM EM UM UNICO, por isso é necessário, a criação
+de ids ao registar usuários
+
+Fiz o cadastro no Google auth, para o login com o google
+
+também implentamos, o direcionamneto ao WhatsApp por meio de escolha do "vendendor"
+
+Já na reta final, pedi uma auditoria completa de segurança ao Claude com o modelo Fable 5, deixando explícito que era só
 diagnóstico (sem mexer em nada até eu revisar o relatório):
 
 > "VAMOS LÁ, VC VAI AGIR COMO UM ESPECIALISTA EM CIBERSEGURANÇA, VÁ EXPLORAR PONTOS
@@ -134,27 +150,7 @@ um token de 2FA "pendente" que na prática dava acesso completo sem o código de
 verificação nunca ser confirmado). No mesmo dia, autorizei a correção num pedido separado
 e explícito:
 
-> "quero que concerte tudo que achou"
-
-Um pedido de uma palavra só testou se eu ia adivinhar o que fazer ou pedir contexto:
-
-> "concerte"
-
-Sem saber a qual dos arquivos abertos aquilo se referia, preferi pedir esclarecimento em
-vez de arriscar uma mudança errada — era sobre configurar o envio real de email (Gmail
-SMTP), não um bug de código.
-
-Depois de rodar o script de dados de exemplo, o pedido que disparou o caso descrito na
-Reflexão Crítica logo abaixo:
-
-> "Quero que coloque imagens coniventes aos anuncios no ads, ta tudo nada a ver"
-
-### Compartilhamento de histórico
-
-O Claude Code (usado no VS Code/terminal) não gera link público de conversa como o
-ChatGPT ou o Claude no navegador. As decisões e prompts mais relevantes trocados com ele
-estão documentados neste Diário de Bordo. *(Se houver link de conversa salvo do Gemini ou
-ChatGPT, adicionar aqui.)*
+> "quero que concerte tudo que achou, me referindo para o opus 4.8"
 
 ### Reflexão crítica
 
@@ -166,7 +162,7 @@ um **fallback para `picsum.photos` quando a busca por palavra-chave falhava** �
 pedido. O resultado só ficou visível depois de rodar: o anúncio do livro "Cálculo Volume
 1" estava exibindo a foto de um grafite numa parede.
 
-Identifiquei o problema comparando visualmente cada imagem contra o título do anúncio
+Indentificamos o problema comparando visualmente cada imagem contra o título do anúncio
 (gerei um mosaico com todas as fotos lado a lado pra conferir de uma vez). Troquei a fonte
 por uma busca por termo de verdade (Openverse, com Wikimedia Commons como reforço pros
 casos mais específicos) e refiz a verificação em rodadas — a primeira passada acertou 12
@@ -176,26 +172,6 @@ específicos até as 17 baterem com o item anunciado. Esse foi um caso claro de 
 da IA parecer certo "no código" (o script rodava sem erro, baixava e salvava uma imagem)
 mas estar semanticamente errado — só a verificação visual, item por item, pegou isso.
 
-## Deploy
-
-**Backend (Render):** New → Blueprint → aponte para este repositório. O Render lê o
-`render.yaml` da raiz sozinho (build, start command, variáveis de ambiente). A
-`SECRET_KEY` é gerada automaticamente; `FRONTEND_ORIGINS` precisa ser preenchida depois
-de saber a URL do Netlify.
-
-**Frontend (Netlify):** New site from Git → aponte para este repositório. O
-`netlify.toml` da raiz já configura a pasta `frontend/` como publicada.
-
-> O plano free do Render não tem disco persistente — o banco SQLite e as fotos enviadas
-> são apagados a cada novo deploy ou quando a instância volta de ociosa. Aceitável para
-> avaliação (o edital permite banco em arquivo "desde que funcione durante os testes"),
-> mas não para produção real sem um disco pago ou um banco externo.
->
-> Por isso o `startCommand` roda o `seed_agentes.py` antes da API: a cada boot o catálogo
-> é repovoado com os 20 estudantes fictícios e seus anúncios. Como as fotos são lidas do
-> próprio repositório, isso leva menos de um segundo e não depende de rede.
->
-> O que **não** sobrevive a um reinício: contas e anúncios criados por visitantes.
 
 ### Aplicação no ar
 
