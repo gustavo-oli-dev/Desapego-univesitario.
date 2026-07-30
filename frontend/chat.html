@@ -11,7 +11,7 @@
   <link rel="icon" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
 
-  <link rel="stylesheet" href="css/styles.css?v=71" />
+  <link rel="stylesheet" href="css/styles.css?v=90" />
 </head>
 <body>
 
@@ -100,7 +100,10 @@
                   <path d="M240 258 A47 47 0 0 1 259 290" />
                   <circle cx="170" cy="245" r="4" fill="currentColor" stroke="none" />
                 </svg>
-                <input type="file" id="f-imagem-chat" accept="image/*" capture="environment" hidden />
+                <!-- Sem o atributo "capture": ele abriria a câmera direto e
+                     esconderia a galeria. Assim o celular pergunta se a pessoa
+                     quer tirar uma foto agora ou escolher uma já salva. -->
+                <input type="file" id="f-imagem-chat" accept="image/*" hidden />
               </label>
               <input type="text" id="f-mensagem" placeholder="Digite sua mensagem..." maxlength="1000" />
               <button type="submit" class="btn btn--primary btn--sm">Enviar</button>
@@ -142,11 +145,11 @@
     </div>
   </div>
 
-  <script src="js/config.js?v=71"></script>
+  <script src="js/config.js?v=90"></script>
 
-  <script src="js/auth.js?v=71"></script>
-  <script src="js/api.js?v=71"></script>
-  <script src="js/site.js?v=71"></script>
-  <script src="js/chat.js?v=71"></script>
+  <script src="js/auth.js?v=90"></script>
+  <script src="js/api.js?v=90"></script>
+  <script src="js/site.js?v=90"></script>
+  <script src="js/chat.js?v=90"></script>
 </body>
 </html>

@@ -218,6 +218,16 @@ function configurarEnvioMensagem() {
   inputImagem.addEventListener("change", () => {
     const arquivo = inputImagem.files[0];
     if (!arquivo) return;
+
+    // Aqui a foto é enviada na hora, sem botão de confirmar — então avisar
+    // antes do upload evita a espera inteira pra depois falhar.
+    const { grandes } = separarImagensPorTamanho([arquivo]);
+    if (grandes.length) {
+      alert(mensagemImagemGrande(grandes));
+      inputImagem.value = "";
+      return;
+    }
+
     // Guarda o arquivo original (vai direto no FormData, sem passar por
     // base64) e já submete — foto não espera clicar em "Enviar".
     arquivoImagemChat = arquivo;

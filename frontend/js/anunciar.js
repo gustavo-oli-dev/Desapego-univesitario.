@@ -150,10 +150,17 @@ function configurarImagem() {
   const feedback = document.getElementById("form-feedback");
 
   input.addEventListener("change", () => {
-    const espacoLivre = MAX_FOTOS - fotosExistentes.length - fotosNovas.length;
-    const arquivos = [...input.files].slice(0, espacoLivre);
+    // Descarta as pesadas antes de contar o espaço livre, pra uma foto que o
+    // servidor recusaria não ocupar uma das 5 vagas.
+    const { aceitas, grandes } = separarImagensPorTamanho(input.files);
 
-    if (input.files.length > espacoLivre) {
+    const espacoLivre = MAX_FOTOS - fotosExistentes.length - fotosNovas.length;
+    const arquivos = aceitas.slice(0, espacoLivre);
+
+    if (grandes.length) {
+      feedback.textContent = mensagemImagemGrande(grandes);
+      feedback.classList.add("is-error");
+    } else if (aceitas.length > espacoLivre) {
       feedback.textContent = `Você pode anunciar com até ${MAX_FOTOS} fotos.`;
       feedback.classList.add("is-error");
     }

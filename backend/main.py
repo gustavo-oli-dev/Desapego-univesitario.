@@ -69,7 +69,15 @@ DIR_AVATARS.mkdir(parents=True, exist_ok=True)
 DIR_CHAT.mkdir(parents=True, exist_ok=True)
 DIR_ANUNCIOS.mkdir(parents=True, exist_ok=True)
 EXTENSOES_IMAGEM_PERMITIDAS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
-TAMANHO_MAXIMO_IMAGEM = 5 * 1024 * 1024  # 5MB (limite do UPLOAD, antes de comprimir)
+# 10MB é o limite do UPLOAD (antes de comprimir): celular moderno em qualidade
+# máxima passa dos 5MB com facilidade, e o que fica salvo é bem menor de todo
+# jeito, porque tudo é recomprimido logo abaixo.
+TAMANHO_MAXIMO_IMAGEM = 10 * 1024 * 1024
+MEGAPIXELS_MAXIMOS = 30
+# O que de fato protege a memória não é o peso do arquivo, é a resolução: o
+# Pillow descomprime pra bitmap, e cada megapixel custa ~3MB de RAM. Um JPEG
+# de 2MB pode ter 100MP e estourar a instância — daí o teto em megapixels.
+TAMANHO_MAXIMO_IMAGEM_MB = TAMANHO_MAXIMO_IMAGEM // (1024 * 1024)
 LADO_MAXIMO_IMAGEM = 1280   # maior lado depois de redimensionar (px)
 QUALIDADE_JPEG = 82         # 0–100; 82 é ótimo equilíbrio nitidez/peso
 
@@ -80,6 +88,18 @@ def comprimir_imagem(conteudo: bytes) -> bytes:
     e reencoda como JPEG. Uma foto de 3–4MB do celular cai pra ~150–300KB.
     PNG/transparência viram fundo branco (marketplace não precisa de alfa)."""
     im = Image.open(io.BytesIO(conteudo))
+
+    # Checa a resolução ANTES de decodificar: Image.open() só lê o cabeçalho,
+    # então aqui ainda não gastamos memória. É o passo que impede uma imagem
+    # pequena em bytes mas enorme em pixels de derrubar a instância.
+    megapixels = (im.width * im.height) / 1_000_000
+    if megapixels > MEGAPIXELS_MAXIMOS:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Imagem com resolução muito alta ({megapixels:.0f}MP)."
+                   f" O máximo é {MEGAPIXELS_MAXIMOS}MP.",
+        )
+
     im = ImageOps.exif_transpose(im)   # foto de celular deitada volta ao normal
     if im.mode in ("RGBA", "LA", "P"):
         fundo = Image.new("RGB", im.size, (255, 255, 255))
@@ -106,7 +126,12 @@ async def salvar_imagem_upload(arquivo: UploadFile, diretorio: Path, url_base: s
 
     conteudo = await arquivo.read()
     if len(conteudo) > TAMANHO_MAXIMO_IMAGEM:
-        raise HTTPException(status_code=422, detail="Imagem muito grande (máximo 5MB)")
+        tamanho_mb = len(conteudo) / (1024 * 1024)
+        raise HTTPException(
+            status_code=422,
+            detail=f"Imagem muito grande ({tamanho_mb:.1f}MB)."
+                   f" O máximo é {TAMANHO_MAXIMO_IMAGEM_MB}MB.",
+        )
 
     try:
         conteudo = comprimir_imagem(conteudo)

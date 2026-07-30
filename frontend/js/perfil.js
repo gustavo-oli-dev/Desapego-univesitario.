@@ -96,9 +96,20 @@ async function carregarPerfil() {
 
 function configurarFotoPerfil() {
   const input = document.getElementById("f-foto");
+  const feedback = document.getElementById("form-feedback-perfil");
+
   input.addEventListener("change", () => {
     const arquivo = input.files[0];
     if (!arquivo) return;
+
+    // Avisa aqui em vez de deixar o upload subir e voltar com erro.
+    const { grandes } = separarImagensPorTamanho([arquivo]);
+    if (grandes.length) {
+      feedback.textContent = mensagemImagemGrande(grandes);
+      feedback.className = "form-feedback is-error";
+      input.value = "";
+      return;
+    }
 
     arquivoFotoSelecionado = arquivo;
 

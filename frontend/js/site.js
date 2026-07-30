@@ -220,6 +220,33 @@ function formatarTelefone(valor) {
   return segundaParte ? `(${ddd}) ${primeiraParte}-${segundaParte}` : `(${ddd}) ${primeiraParte}`;
 }
 
+// --- Tamanho de imagem -----------------------------------------------------
+// O backend recusa acima de 10MB (ver TAMANHO_MAXIMO_IMAGEM em main.py). Sem
+// checar aqui também, o navegador sobe o arquivo inteiro só pra receber um
+// erro — no celular isso é espera e dado gasto à toa. Esta função NÃO
+// substitui a validação do servidor, que é a que vale de verdade; é só pra
+// avisar cedo e com uma mensagem que diz o tamanho real do arquivo.
+const LIMITE_IMAGEM_MB = 10;
+
+function separarImagensPorTamanho(arquivos) {
+  const limite = LIMITE_IMAGEM_MB * 1024 * 1024;
+  const aceitas = [];
+  const grandes = [];
+  [...arquivos].forEach((a) => (a.size > limite ? grandes : aceitas).push(a));
+  return { aceitas, grandes };
+}
+
+// Monta a mensagem citando o tamanho do arquivo, que é a informação que
+// ajuda a pessoa a entender o que fazer.
+function mensagemImagemGrande(grandes) {
+  if (!grandes.length) return "";
+  if (grandes.length === 1) {
+    const mb = (grandes[0].size / (1024 * 1024)).toFixed(1);
+    return `A foto tem ${mb}MB e o limite é ${LIMITE_IMAGEM_MB}MB. Escolha uma imagem menor.`;
+  }
+  return `${grandes.length} fotos passam de ${LIMITE_IMAGEM_MB}MB e foram ignoradas.`;
+}
+
 // Liga a formatação automática a um <input> de telefone.
 function configurarCampoTelefone(input) {
   if (!input) return;
