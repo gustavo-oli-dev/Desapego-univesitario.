@@ -98,6 +98,16 @@ fundamentos do projeto:
 > ele armazenar na memória todas as partes desse prompt de contexto, para que os
 > fundamentos do projeto não se percam."
 
+Antes de escrever qualquer código, defini a estrutura do que o sistema precisava ter:
+
+```
+HOME · CATÁLOGO · MEUS ANÚNCIOS · ANUNCIAR ITEM
+```
+
+Comecei pelo frontend de propósito, e só depois pedi o backend em Python. Ver as telas
+prontas deixou claro quais dados a API precisava devolver — o contrário (API primeiro)
+teria me feito adivinhar campos que talvez nem fossem usados.
+
 Diretriz de design passada ao Claude Code no início do frontend, pra fugir de telas
 poluídas:
 
@@ -125,8 +135,19 @@ como foi escrito, é bem mais corrido do que essa explicação — mas foi exata
 > curso? um filtro de materia? um filtro de autor?? essas coisas devem ser levadas em
 > consideracao."
 
+No chat, em vez de mandar implementar, pedi as opções: quais formas existiam de manter a
+conversa atualizada e qual era a mais eficiente. Com WebSocket e polling na mesa, escolhi
+**polling a cada 4 segundos** — num chat de marketplace ninguém sente 4 segundos de
+atraso, e evitei a complexidade de manter conexão aberta num projeto de 15 dias. A
+decisão foi minha; a IA só apresentou o cardápio.
+
 A maioria dos bugs encontrados foram no CSS, que foram rapidamente resolvidos através de uma 
 auditoria do Claude com o modelo Opus 4.8.
+
+Um problema recorrente era mudar o CSS e nada aparecer no navegador. Resolvi expondo a
+versão no próprio endereço do arquivo (`styles.css?v=91`) e subindo esse número a cada
+alteração: o navegador entende como arquivo novo e não entrega o antigo do cache. O mesmo
+vale para o Service Worker, que tem um nome de cache versionado.
 
 Prompt de separação por tenant: Verifique o banco de dados, se está funcionando de maneira ao 
 qual foi pedida e em seguida GRAVE ISSO EM SUA MEMÓRIA: Os dados de cada usuários devem ser separados 
@@ -151,6 +172,27 @@ verificação nunca ser confirmado). No mesmo dia, autorizei a correção num pe
 e explícito:
 
 > "quero que concerte tudo que achou, me referindo para o opus 4.8"
+
+Já com o sistema pronto, montei a landing page — a página que apresenta o projeto, separada
+do app. O hero saiu do **Nano Banana** (o mascote na biblioteca), e a paleta da página foi
+tirada dessa própria ilustração: pedi que amostrassem os pixels dela em vez de escolher
+cores no olho, e o resultado foi madeira `#351B19` e latão `#C4924A`. Só que aí ela ficou
+quente demais perto do app, que é claro e verde — a correção foi fazer o calor morrer
+conforme a página desce, terminando já nas cores do sistema, pra a passagem de uma pra
+outra não dar solavanco.
+
+Por fim, o deploy (Render para a API, Netlify para o site) mostrou uma categoria de erro
+que não aparece em desenvolvimento nenhum:
+
+- O botão "Entrar no app" voltava para a própria landing. O Netlify tem um recurso que
+  reescreve `href="index.html"` para `href="/"`, e `/` era justamente onde eu servia a
+  landing — duas configurações minhas brigando entre si.
+- Conta, foto de perfil e conversas sumiram do ar. O plano gratuito do Render apaga o
+  disco a cada deploy: o banco era recriado do zero. Investigando isso, apareceu um bug
+  real de código — o token continuava válido depois de o usuário deixar de existir, e as
+  rotas quebravam com erro 500 em vez de pedir login de novo.
+
+Nenhum dos dois teria aparecido rodando local. Foi o deploy que os revelou.
 
 ### Reflexão crítica
 

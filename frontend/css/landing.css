@@ -151,9 +151,11 @@ body.modo-noturno.lp-page .topbar.is-preso .brand { color: #f2f2f2; }
      A altura vem medida pelo JS (--lp-topo-altura) em vez de um número
      fixo: assim mudar o espaçamento da barra não descola o hero. */
   margin-top: calc(var(--lp-topo-altura, 52px) * -1);
-  /* O padding de baixo é generoso no celular de propósito: é o espaço que
-     deixa a placa da mesa aparecer sob o texto, em vez de ficar encoberta. */
-  padding: 6.5rem 0 9rem;
+  /* No celular a ilustração é dimensionada pela ALTURA (não há corte
+     vertical nessa proporção), então a altura do hero manda no tamanho de
+     tudo que aparece nele — inclusive da placa da mesa. Um padding menor
+     encolhe a placa e a empurra pra baixo, tirando-a da disputa com o texto. */
+  padding: 6.5rem 0 5rem;
   overflow: hidden;
   background: var(--lp-madeira-escura);
   color: #f6ede0;
@@ -193,8 +195,8 @@ body.modo-noturno.lp-page .topbar.is-preso .brand { color: #f2f2f2; }
       to bottom,
       rgba(53, 27, 25, 0.9) 0%,
       rgba(53, 27, 25, 0.86) 46%,
-      rgba(53, 27, 25, 0.5) 80%,
-      rgba(53, 27, 25, 0.28) 100%
+      rgba(53, 27, 25, 0.62) 80%,
+      rgba(53, 27, 25, 0.5) 100%
     );
 }
 @media (min-width: 900px) {
