@@ -1220,7 +1220,11 @@ body.modo-noturno .chat-atalho__badge { box-shadow: 0 0 0 2px #363636; }
   padding: 0.8rem 1rem;
   border-bottom: 1px solid rgba(28, 69, 50, 0.1);
 }
-.chat-painel__pessoa { display: flex; align-items: center; gap: 0.6rem; }
+.chat-painel__pessoa { display: flex; align-items: center; gap: 0.6rem; min-width: 0; }
+/* min-width:0 no bloco de texto é o que deixa o ellipsis (abaixo) truncar de
+   verdade — sem isto, esse <div> recusa encolher e o nome vaza por cima do
+   botão "Confirmar venda" quando o cabeçalho fica apertado no mobile. */
+.chat-painel__pessoa > div { min-width: 0; overflow: hidden; }
 .chat-painel__pessoa:hover strong { text-decoration: underline; }
 .chat-painel__cabecalho span { display: block; font-size: 0.8rem; color: var(--ink-soft); }
 .perfil-foto__avatar.chat-avatar-outro { width: 40px; height: 40px; font-size: 1rem; flex-shrink: 0; }
@@ -1693,6 +1697,21 @@ body.modo-noturno .chat-atalho__badge { box-shadow: 0 0 0 2px #363636; }
     white-space: nowrap;
     display: block;
   }
+
+  /* Banner de confirmar venda: no desktop cabe tudo numa linha, mas no
+     mobile o texto e os dois botões brigando por espaço (com
+     justify-content:space-between + flex-wrap) empurrava os botões pra uma
+     segunda linha em pílulas grandes, pesado pra um aviso inline. Empilha
+     de propósito — texto em cima, botões embaixo, colados à esquerda — em
+     vez de deixar isso acontecer por acidente do wrap. */
+  .chat-confirmacao {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.6em 0.9rem;
+    font-size: 0.8rem;
+  }
+  .chat-confirmacao__acoes { gap: 0.4rem; }
 
   /* Com a conversa aberta, o título "Chat" da página some pra a conversa
      ocupar a tela toda; o "Voltar" no cabeçalho já orienta a navegação. */
