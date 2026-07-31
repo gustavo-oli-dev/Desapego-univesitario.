@@ -43,10 +43,13 @@ async function carregarPagina({ anexar }) {
     return;
   }
 
+  // Vendido é um estado final — editar ou remover um item já vendido não
+  // faz sentido (a transação já aconteceu), então só libera na aba Ativos.
+  const podeMexer = abaAtual === "ativos";
   renderGrid(grid, anuncios, empty, {
     anexar,
-    permitirEditar: true,
-    permitirRemover: true,
+    permitirEditar: podeMexer,
+    permitirRemover: podeMexer,
     onRemover: removerAnuncioOtimista,
   });
 

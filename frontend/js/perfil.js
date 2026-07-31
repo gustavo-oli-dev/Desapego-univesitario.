@@ -289,7 +289,9 @@ function configurarAbasHistorico() {
   async function mostrarAba(aba) {
     botoes.forEach((b) => b.classList.toggle("is-ativa", b.dataset.aba === aba));
     const anuncios = await api.listarAnuncios({ usuario: meuId, vendido: aba === "vendidos" });
-    renderGrid(lista, anuncios, empty, { permitirEditar: true });
+    // Vendido é estado final — editar não faz sentido pra transação já
+    // concluída, então só libera na aba Ativos (mesma regra de meus-anuncios.js).
+    renderGrid(lista, anuncios, empty, { permitirEditar: aba === "ativos" });
   }
 
   botoes.forEach((botao) => {
