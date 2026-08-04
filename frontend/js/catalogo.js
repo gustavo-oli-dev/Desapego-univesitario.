@@ -94,21 +94,30 @@ function configurarSubfiltros() {
 // A Home manda pro catálogo já com um filtro na URL (busca, categoria ou
 // tipo), vindo da barra de busca e dos chips. Aplica esses valores nos
 // controles antes do primeiro carregamento.
+// Devolve se algo que afeta a busca no servidor (categoria ou texto) mudou
+// — é o que decide se precisa buscar nos anúncios de novo.
 function aplicarFiltrosDaURL() {
   const params = new URLSearchParams(window.location.search);
+  let precisaRebuscar = false;
 
   const q = params.get("q");
-  if (q) inputBusca.value = q;
+  if (q) {
+    inputBusca.value = q;
+    precisaRebuscar = true;
+  }
 
   const categoria = params.get("categoria");
   if (categoria && api.categorias.includes(categoria)) {
     selectCategoria.value = categoria;
+    precisaRebuscar = true;
   }
 
   const tipo = params.get("tipo");
   if (tipo && ["doacao", "venda"].includes(tipo)) {
     selectTipo.value = tipo;
   }
+
+  return precisaRebuscar;
 }
 
 // Botão de filtros (mobile): abre/fecha o painel de filtros, que fica
@@ -125,7 +134,21 @@ function configurarBotaoFiltros() {
 }
 
 async function init() {
-  await api.carregarOpcoes();
+  configurarSubfiltros();
+  configurarBotaoFiltros();
+  inputBusca.addEventListener("input", carregarCatalogo);
+  selectTipo.addEventListener("change", carregarCatalogo);
+  selectOrdenar.addEventListener("change", carregarCatalogo);
+
+  // Dispara os anúncios e as opções de filtro em paralelo, em vez de esperar
+  // um terminar pra só então começar o outro — isso dobrava o tempo até
+  // aparecer algo em tela. Antes das opções chegarem, o select de categoria
+  // ainda está vazio, então essa primeira busca já sai sem filtro de
+  // categoria (mesmo resultado de "todas" — não desperdiça nada).
+  const opcoesPromise = api.carregarOpcoes();
+  carregarCatalogo();
+
+  await opcoesPromise;
   // A lista de cursos é fixa (não depende dos anúncios), então já monta aqui
   // — assim o dropdown nunca abre vazio.
   preencherCursos();
@@ -134,16 +157,11 @@ async function init() {
     preencherCursos();
     carregarCatalogo();
   });
-  configurarSubfiltros();
-  configurarBotaoFiltros();
-  inputBusca.addEventListener("input", carregarCatalogo);
-  selectTipo.addEventListener("change", carregarCatalogo);
-  selectOrdenar.addEventListener("change", carregarCatalogo);
 
-  // Depois de montar os controles, aplica o que veio da Home.
-  aplicarFiltrosDaURL();
-
-  carregarCatalogo();
+  // Filtro vindo da Home (ex.: ?categoria=Livros) só dá pra validar depois
+  // que api.categorias existe — se mudou algo que afeta a busca, busca de
+  // novo (a primeira busca, sem filtro, já apareceu na tela nesse meio-tempo).
+  if (aplicarFiltrosDaURL()) carregarCatalogo();
 }
 
 init();
