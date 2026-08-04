@@ -1,22 +1,21 @@
 /* ===================================================================
    Landing page (landing.html) — complemento do styles.css
 
-   Estratégia de cor: o azul profundo da ilustração vai clareando
-   conforme a pessoa desce. O hero é escuro (azul-marinho e dourado,
-   tirados da própria imagem), a seção seguinte é uma faixa de bruma
-   (azul bem claro) de transição, e daí pra baixo a página já está na
-   paleta do app (--green-*, --ink, fundo #dfe8f5). Assim o salto pra
-   dentro do app, no fim, é suave em vez de um solavanco.
+   Estratégia de cor: o calor da ilustração vai MORRENDO conforme a pessoa
+   desce. O hero é quente (madeira e latão, tirados da própria imagem), a
+   seção seguinte é uma faixa areia de transição, e daí pra baixo a página
+   já está na paleta do app (--green-*, --ink, fundo #dfe8f5). Assim o
+   salto pra dentro do app, no fim, é suave em vez de um solavanco.
 
    Os componentes continuam sendo os do projeto (.btn, .topbar, .brand).
    =================================================================== */
 body.lp-page {
-  /* ---- só o hero e a faixa de transição ---- */
-  --lp-azul-escuro: #132a40;
+  /* ---- quentes: só o hero e a faixa de transição ---- */
+  --lp-madeira-escura: #351b19;
   --lp-latao: #c4924a;
   --lp-latao-vivo: #dcae66;
   --lp-pergaminho: #e2bd8e;
-  --lp-bruma: #e9eff7;
+  --lp-areia: #f2ebe1;
 
   /* ---- daqui pra baixo, a paleta do app ---- */
   --lp-fundo: #dfe8f5;                  /* mesmo fundo do app */
@@ -30,7 +29,7 @@ body.lp-page {
 }
 /* Modo noturno: as mesmas cores que o styles.css usa no app. */
 body.lp-page.modo-noturno {
-  --lp-bruma: #26313d;
+  --lp-areia: #3a3330;
   --lp-fundo: #363636;
   --lp-faixa: #303030;
   --lp-cartao: #363636;
@@ -67,7 +66,7 @@ body.lp-js .lp-anim.is-dentro {
 .lp-secao { padding: 3.4rem 0; }
 @media (min-width: 768px) { .lp-secao { padding: 5rem 0; } }
 
-.lp-secao--bruma { background: var(--lp-bruma); }   /* transição escuro→app */
+.lp-secao--areia { background: var(--lp-areia); }   /* transição quente→app */
 .lp-secao--faixa { background: var(--lp-faixa); }
 
 .lp-cabecalho { max-width: 60ch; margin-bottom: 2.2rem; }
@@ -93,7 +92,7 @@ body.lp-js .lp-anim.is-dentro {
   text-transform: uppercase;
 }
 .lp-hero .lp-etiqueta,
-.lp-secao--bruma .lp-etiqueta {
+.lp-secao--areia .lp-etiqueta {
   background: rgba(196, 146, 74, 0.16);
   border: 1px solid rgba(196, 146, 74, 0.45);
   color: #8a6122;
@@ -143,8 +142,8 @@ body.modo-noturno.lp-page .topbar.is-preso .brand { color: #f2f2f2; }
 @media (max-width: 520px) { .lp-page .topbar .brand span { display: none; } }
 
 /* ===================================================================
-   HERO — a única parte totalmente escura: a ilustração ocupa a faixa
-   inteira, com um véu de azul-marinho do lado do texto.
+   HERO — a única parte totalmente quente: a ilustração ocupa a faixa
+   inteira, com um véu de madeira escura do lado do texto.
    =================================================================== */
 .lp-hero {
   position: relative;
@@ -158,7 +157,7 @@ body.modo-noturno.lp-page .topbar.is-preso .brand { color: #f2f2f2; }
      encolhe a placa e a empurra pra baixo, tirando-a da disputa com o texto. */
   padding: 6.5rem 0 5rem;
   overflow: hidden;
-  background: var(--lp-azul-escuro);
+  background: var(--lp-madeira-escura);
   color: #f6ede0;
 }
 @media (min-width: 768px) { .lp-hero { padding: 9rem 0 6rem; } }
@@ -177,7 +176,7 @@ body.modo-noturno.lp-page .topbar.is-preso .brand { color: #f2f2f2; }
 @media (min-width: 900px) {
   .lp-hero__fundo {
     background-image: url("../img/hero-biblioteca.jpg");
-    background-position: 40% 52%;
+    background-position: 40% 26%;
   }
 }
 /* Véu em duas camadas.
@@ -191,26 +190,26 @@ body.modo-noturno.lp-page .topbar.is-preso .brand { color: #f2f2f2; }
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to bottom, rgba(8, 18, 28, 0.62) 0, rgba(8, 18, 28, 0) 96px),
+    linear-gradient(to bottom, rgba(43, 21, 19, 0.8) 0, rgba(43, 21, 19, 0) 96px),
     linear-gradient(
       to bottom,
-      rgba(19, 42, 64, 0.72) 0%,
-      rgba(19, 42, 64, 0.66) 46%,
-      rgba(19, 42, 64, 0.44) 80%,
-      rgba(19, 42, 64, 0.34) 100%
+      rgba(53, 27, 25, 0.9) 0%,
+      rgba(53, 27, 25, 0.86) 46%,
+      rgba(53, 27, 25, 0.62) 80%,
+      rgba(53, 27, 25, 0.5) 100%
     );
 }
 @media (min-width: 900px) {
   .lp-hero__veu {
     background:
-      linear-gradient(to bottom, rgba(8, 18, 28, 0.62) 0, rgba(8, 18, 28, 0) 110px),
+      linear-gradient(to bottom, rgba(43, 21, 19, 0.82) 0, rgba(43, 21, 19, 0) 110px),
       linear-gradient(
         100deg,
-        rgba(8, 18, 28, 0.82) 0%,
-        rgba(8, 18, 28, 0.68) 45%,
-        rgba(8, 18, 28, 0.34) 62%,
-        rgba(8, 18, 28, 0.06) 78%,
-        rgba(8, 18, 28, 0.2) 100%
+        rgba(43, 21, 19, 0.96) 0%,
+        rgba(43, 21, 19, 0.9) 34%,
+        rgba(43, 21, 19, 0.55) 55%,
+        rgba(43, 21, 19, 0.18) 72%,
+        rgba(43, 21, 19, 0.35) 100%
       );
   }
 }
@@ -229,7 +228,7 @@ body.modo-noturno.lp-page .topbar.is-preso .brand { color: #f2f2f2; }
   font-size: 2.05rem;
   line-height: 1.12;
   margin-bottom: 0.9rem;
-  text-shadow: 0 2px 14px rgba(4, 10, 18, 0.55);
+  text-shadow: 0 2px 14px rgba(24, 10, 8, 0.5);
 }
 @media (min-width: 768px) { .lp-hero h1 { font-size: 3.15rem; } }
 .lp-hero h1 em { font-style: normal; color: var(--lp-latao-vivo); }
@@ -238,7 +237,7 @@ body.modo-noturno.lp-page .topbar.is-preso .brand { color: #f2f2f2; }
   color: rgba(246, 237, 224, 0.9);
   font-size: 1.02rem;
   margin-bottom: 1.7rem;
-  text-shadow: 0 1px 10px rgba(4, 10, 18, 0.55);
+  text-shadow: 0 1px 10px rgba(24, 10, 8, 0.5);
 }
 @media (min-width: 768px) { .lp-hero__lead { font-size: 1.13rem; } }
 
