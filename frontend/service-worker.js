@@ -5,7 +5,7 @@
  * só o "esqueleto" da interface (HTML/CSS/JS/imagens) funciona offline.
  */
 
-const CACHE_NAME = "desapego-shell-v283";
+const CACHE_NAME = "desapego-shell-v284";
 
 const APP_SHELL = [
   "./",
@@ -92,7 +92,19 @@ function networkFirst(request) {
       caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
       return response;
     })
-    .catch(() => caches.match(request).then((cached) => cached || caches.match("./index.html")));
+    .catch(() =>
+      caches.match(request).then((cached) => {
+        if (cached) return cached;
+        // Cair pro index.html só faz sentido pra NAVEGAÇÃO (abrir uma página
+        // offline). Pra imagem, CSS ou JS que falhou e não está em cache,
+        // devolver HTML é sempre errado: o navegador recebe 200 com conteúdo
+        // que não sabe decodificar e o recurso some sem nenhum erro visível —
+        // era isso que podia apagar a ilustração do hero deixando só a cor de
+        // fundo. Sem resposta, o navegador ao menos reporta a falha de verdade.
+        if (request.mode === "navigate") return caches.match("./index.html");
+        return Response.error();
+      })
+    );
 }
 
 self.addEventListener("fetch", (event) => {
